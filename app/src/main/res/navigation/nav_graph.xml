@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/navigation_home">
 
+    <!-- Guest Routes -->
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.pbde401.studyworks.ui.home.HomeFragment"
-        android:label="Home" />
+        android:label="Home" 
+        tools:layout="@layout/fragment_home"/>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.pbde401.studyworks.ui.dashboard.DashboardFragment"
-        android:label="Dashboard" />
+        android:id="@+id/navigation_login"
+        android:name="com.pbde401.studyworks.ui.auth.login.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login"/>
 
     <fragment
-        android:id="@+id/navigation_jobs"
-        android:name="com.pbde401.studyworks.ui.jobs.JobsFragment"
-        android:label="Jobs" />
-
-    <fragment
-        android:id="@+id/navigation_chats"
-        android:name="com.pbde401.studyworks.ui.chats.ChatsFragment"
-        android:label="Chats" />
-
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.pbde401.studyworks.ui.profile.ProfileFragment"
-        android:label="Profile" />
+        android:id="@+id/navigation_register"
+        android:name="com.pbde401.studyworks.ui.auth.register.RegisterFragment"
+        android:label="Register"
+        tools:layout="@layout/fragment_register"/>
 </navigation>
