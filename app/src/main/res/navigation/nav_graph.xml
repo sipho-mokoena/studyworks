@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.pbde401.studyworks.ui.home.HomeFragment"
+        android:label="Home" />
+
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="com.pbde401.studyworks.ui.dashboard.DashboardFragment"
+        android:label="Dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_jobs"
+        android:name="com.pbde401.studyworks.ui.jobs.JobsFragment"
+        android:label="Jobs" />
+
+    <fragment
+        android:id="@+id/navigation_chats"
+        android:name="com.pbde401.studyworks.ui.chats.ChatsFragment"
+        android:label="Chats" />
+
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.pbde401.studyworks.ui.profile.ProfileFragment"
+        android:label="Profile" />
+</navigation>
