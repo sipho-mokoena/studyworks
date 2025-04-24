@@ -7,4 +7,11 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_employer_main">EmployerMainActivity</string>
+
+    <!-- Bottom Navigation Menu Items -->
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_jobs">Jobs</string>
+    <string name="menu_applications">Applications</string>
+    <string name="menu_chats">Chats</string>
+    <string name="menu_profile">Profile</string>
 </resources>
