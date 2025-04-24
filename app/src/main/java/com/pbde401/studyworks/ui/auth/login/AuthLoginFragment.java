@@ -19,9 +19,9 @@ import com.pbde401.studyworks.R;
 import com.pbde401.studyworks.data.models.enums.UserRole;
 import androidx.core.content.ContextCompat;
 
-public class LoginFragment extends Fragment {
+public class AuthLoginFragment extends Fragment {
 
-    private LoginViewModel viewModel;
+    private AuthLoginViewModel viewModel;
     private EditText emailEditText;
     private EditText passwordEditText;
     private RadioGroup roleRadioGroup;
@@ -29,14 +29,14 @@ public class LoginFragment extends Fragment {
     private TextView registerLinkText;
     private View loadingOverlay;
     
-    public LoginFragment() {
+    public AuthLoginFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        viewModel = new ViewModelProvider(this).get(AuthLoginViewModel.class);
     }
 
     @Override
@@ -92,8 +92,15 @@ public class LoginFragment extends Fragment {
     private void handleLogin() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
-        UserRole role = roleRadioGroup.getCheckedRadioButtonId() == R.id.radioButtonCandidate ?
-                UserRole.CANDIDATE : UserRole.EMPLOYER;
+        int checkedId = roleRadioGroup.getCheckedRadioButtonId();
+        UserRole role;
+        if (checkedId == R.id.radioButtonCandidate) {
+            role = UserRole.CANDIDATE;
+        } else if (checkedId == R.id.radioButtonEmployer) {
+            role = UserRole.EMPLOYER;
+        } else {
+            role = UserRole.GUEST;
+        }
 
         // Basic validation
         if (TextUtils.isEmpty(email)) {
