@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_employer_graph"
+    app:startDestination="@id/navigation_employer_dashboard">
+
+    <fragment
+        android:id="@+id/navigation_employer_dashboard"
+        android:name="com.pbde401.studyworks.ui.employer.dashboard.EmployerDashboardFragment"
+        android:label="Dashboard"
+        tools:layout="@layout/fragment_employer_dashboard" />
+
+    <fragment
+        android:id="@+id/navigation_employer_jobs"
+        android:name="com.pbde401.studyworks.ui.employer.jobs.EmployerJobsFragment"
+        android:label="Jobs"
+        tools:layout="@layout/fragment_employer_jobs" />
+
+    <fragment
+        android:id="@+id/navigation_employer_applications"
+        android:name="com.pbde401.studyworks.ui.employer.applications.EmployerApplicationsFragment"
+        android:label="Applications"
+        tools:layout="@layout/fragment_employer_applications" />
+
+    <fragment
+        android:id="@+id/navigation_employer_chats"
+        android:name="com.pbde401.studyworks.ui.employer.chats.EmployerChatsFragment"
+        android:label="Chats"
+        tools:layout="@layout/fragment_employer_chats" />
+
+    <fragment
+        android:id="@+id/navigation_employer_profile"
+        android:name="com.pbde401.studyworks.ui.employer.profile.EmployerProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_employer_profile" />
+</navigation>
