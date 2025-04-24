@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -8,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.pbde401.studyworks"
-        minSdk 21
+        minSdkVersion 23
         targetSdk 35
         versionCode 1
         versionName "1.0"
@@ -43,5 +45,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.6.0'
     implementation 'com.google.firebase:firebase-auth:22.0.0'
     implementation 'com.google.firebase:firebase-firestore:24.6.0'
+    implementation platform('com.google.firebase:firebase-bom:33.12.0')
     implementation 'com.google.android.material:material:1.11.0'
 }
