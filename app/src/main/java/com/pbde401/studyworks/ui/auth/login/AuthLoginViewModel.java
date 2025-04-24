@@ -8,7 +8,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.pbde401.studyworks.data.repository.UserRepository;
 import com.pbde401.studyworks.data.models.enums.UserRole;
 
-public class LoginViewModel extends ViewModel {
+public class AuthLoginViewModel extends ViewModel {
     
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
     private final UserRepository userRepository = new UserRepository();
@@ -56,24 +56,24 @@ public class LoginViewModel extends ViewModel {
     
     private void fetchUserData(FirebaseUser firebaseUser, UserRole selectedRole) {
         userRepository.getUserByEmail(firebaseUser.getEmail())
-                .addOnSuccessListener(user -> {
-                    if (user != null) {
-                        try {
-                            userRole = user.getRole();
-                            isLoading.setValue(false);
-                            authState.setValue(true);
-                        } catch (IllegalArgumentException e) {
-                            isLoading.setValue(false);
-                            error.setValue("Invalid user role retrieved from the database.");
-                        }
-                    } else {
+            .addOnSuccessListener(user -> {
+                if (user != null) {
+                    try {
+                        userRole = selectedRole;
                         isLoading.setValue(false);
-                        error.setValue("User account not found.");
+                        authState.setValue(true);
+                    } catch (IllegalArgumentException e) {
+                        isLoading.setValue(false);
+                        error.setValue("Invalid user role retrieved from the database.");
                     }
-                })
-                .addOnFailureListener(e -> {
+                } else {
                     isLoading.setValue(false);
-                    error.setValue("Error fetching user data: " + e.getMessage());
-                });
+                    error.setValue("User account not found.");
+                }
+            })
+            .addOnFailureListener(e -> {
+                isLoading.setValue(false);
+                error.setValue("Error fetching user data: " + e.getMessage());
+            });
     }
 }
