@@ -45,7 +45,7 @@ public class HomeFragment extends Fragment {
         
         for (FeatureData feature : features) {
             MaterialCardView card = (MaterialCardView) getLayoutInflater()
-                .inflate(R.layout.feature_card, featuresContainer, false);
+                .inflate(R.layout.component_home_feature_card, featuresContainer, false);
             
             TextView titleView = card.findViewById(R.id.feature_title);
             TextView descriptionView = card.findViewById(R.id.feature_description);
