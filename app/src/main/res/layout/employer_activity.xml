@@ -19,15 +19,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toTopOf="@id/menu_home_bottom_navigation"
+        app:layout_constraintBottom_toTopOf="@id/menu_employer_bottom_navigation"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:navGraph="@navigation/navigation_home_graph" />
+        app:navGraph="@navigation/navigation_employer_graph" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/menu_home_bottom_navigation"
+        android:id="@+id/menu_employer_bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/menu_home_bottom_nav" />
+        app:menu="@menu/menu_employer_bottom_nav" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
