@@ -8,16 +8,19 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.pbde401.studyworks.auth.AuthStore;
+import com.google.firebase.FirebaseApp;
 
 public class MainActivity extends AppCompatActivity {
     private NavController navController;
-    private AuthStore authStore;
     private AppBarConfiguration appBarConfig;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this);
+
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
