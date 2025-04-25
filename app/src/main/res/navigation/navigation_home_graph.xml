@@ -52,4 +52,5 @@
         android:name="com.pbde401.studyworks.ui.employer.EmployerMainActivity"
         android:label="Employer Dashboard"
         tools:layout="@layout/activity_employer_main" />
+
 </navigation>
