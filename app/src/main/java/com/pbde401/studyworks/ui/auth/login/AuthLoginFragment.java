@@ -48,7 +48,6 @@ public class AuthLoginFragment extends Fragment {
         // Initialize UI elements
         emailEditText = view.findViewById(R.id.editTextEmail);
         passwordEditText = view.findViewById(R.id.editTextPassword);
-        roleRadioGroup = view.findViewById(R.id.radioGroupRole);
         loginButton = view.findViewById(R.id.buttonLogin);
         registerLinkText = view.findViewById(R.id.textViewRegisterLink);
         
