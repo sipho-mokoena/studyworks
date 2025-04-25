@@ -125,8 +125,6 @@ public class AuthLoginFragment extends Fragment {
             } else if (role == UserRole.EMPLOYER) {
                 Navigation.findNavController(requireView())
                     .navigate(R.id.action_navigation_login_to_employer_dashboard);
-            } else {
-                Snackbar.make(requireView(), "Invalid user role", Snackbar.LENGTH_LONG).show();
             }
         } catch (Exception e) {
             Snackbar.make(requireView(), "Navigation error: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
