@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.pbde401.studyworks.R;
+import com.pbde401.studyworks.data.models.User;
 import com.pbde401.studyworks.data.models.enums.UserRole;
 import androidx.core.content.ContextCompat;
 
@@ -27,7 +28,6 @@ public class AuthLoginFragment extends Fragment {
     private RadioGroup roleRadioGroup;
     private Button loginButton;
     private TextView registerLinkText;
-    private View loadingOverlay;
     
     public AuthLoginFragment() {
         // Required empty public constructor
@@ -51,22 +51,18 @@ public class AuthLoginFragment extends Fragment {
         roleRadioGroup = view.findViewById(R.id.radioGroupRole);
         loginButton = view.findViewById(R.id.buttonLogin);
         registerLinkText = view.findViewById(R.id.textViewRegisterLink);
-        loadingOverlay = view.findViewById(R.id.loadingOverlay);
         
         // Setup observers
         viewModel.getAuthState().observe(getViewLifecycleOwner(), isAuthenticated -> {
             if (isAuthenticated) {
-                UserRole role = viewModel.getUserRole();
-                navigateToUserDashboard(role);
+                navigateToUserDashboard();
             }
         });
         
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
             if (isLoading) {
-                loadingOverlay.setVisibility(View.VISIBLE);
                 loginButton.setEnabled(false);
             } else {
-                loadingOverlay.setVisibility(View.GONE);
                 loginButton.setEnabled(true);
             }
         });
@@ -92,15 +88,6 @@ public class AuthLoginFragment extends Fragment {
     private void handleLogin() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
-        int checkedId = roleRadioGroup.getCheckedRadioButtonId();
-        UserRole role;
-        if (checkedId == R.id.radioButtonCandidate) {
-            role = UserRole.CANDIDATE;
-        } else if (checkedId == R.id.radioButtonEmployer) {
-            role = UserRole.EMPLOYER;
-        } else {
-            role = UserRole.GUEST;
-        }
 
         // Basic validation
         if (TextUtils.isEmpty(email)) {
@@ -114,15 +101,17 @@ public class AuthLoginFragment extends Fragment {
         }
 
         // Attempt login
-        viewModel.login(email, password, role);
+        viewModel.login(email, password);
     }
     
-    private void navigateToUserDashboard(UserRole role) {
+    private void navigateToUserDashboard() {
+        UserRole userRole = viewModel.getUserRole();
+
         try {
-            if (role == UserRole.CANDIDATE) {
+            if (userRole == UserRole.CANDIDATE) {
                 Navigation.findNavController(requireView())
                     .navigate(R.id.action_navigation_login_to_candidate_dashboard);
-            } else if (role == UserRole.EMPLOYER) {
+            } else if (userRole == UserRole.EMPLOYER) {
                 Navigation.findNavController(requireView())
                     .navigate(R.id.action_navigation_login_to_employer_dashboard);
             }
