@@ -33,8 +33,12 @@ public class AuthLoginViewModel extends ViewModel {
     public UserRole getUserRole() {
         return userRole;
     }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
     
-    public void login(String email, String password, UserRole selectedRole) {
+    public void login(String email, String password) {
         isLoading.setValue(true);
         error.setValue(null);
         
@@ -42,7 +46,7 @@ public class AuthLoginViewModel extends ViewModel {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult().getUser() != null) {
                         FirebaseUser firebaseUser = task.getResult().getUser();
-                        fetchUserData(firebaseUser, selectedRole);
+                        fetchUserData(firebaseUser);
                     } else {
                         isLoading.setValue(false);
                         error.setValue("Login failed. Please check your credentials and try again.");
@@ -54,12 +58,12 @@ public class AuthLoginViewModel extends ViewModel {
                 });
     }
     
-    private void fetchUserData(FirebaseUser firebaseUser, UserRole selectedRole) {
+    private void fetchUserData(FirebaseUser firebaseUser) {
         userRepository.getUserByEmail(firebaseUser.getEmail())
             .addOnSuccessListener(user -> {
                 if (user != null) {
                     try {
-                        userRole = selectedRole;
+                        setUserRole(user.getRole());
                         isLoading.setValue(false);
                         authState.setValue(true);
                     } catch (IllegalArgumentException e) {
