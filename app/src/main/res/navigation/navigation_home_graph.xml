@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_home_to_login"
-            app:destination="@id/navigation_login" />
+            app:destination="@id/navigation_home" />
         <action
             android:id="@+id/action_home_to_register"
             app:destination="@id/navigation_register" />
@@ -39,7 +39,18 @@
         android:id="@+id/navigation_register"
         android:name="com.pbde401.studyworks.ui.auth.register.AuthRegisterFragment"
         android:label="Register"
-        tools:layout="@layout/fragment_auth_register"/>
+        tools:layout="@layout/fragment_auth_register">
+        <action
+            android:id="@+id/action_navigation_login_to_candidate_dashboard"
+            app:destination="@id/activity_candidate_main"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_navigation_login_to_employer_dashboard"
+            app:destination="@id/activity_employer_main"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"/>
+    </fragment>
 
     <activity
         android:id="@+id/activity_candidate_main"

@@ -57,6 +57,9 @@
                     android:checked="true"
                     android:gravity="center"
                     android:padding="12dp"
+                    android:layout_marginRight="6dp"
+                    android:background="@drawable/radio_selector"
+                    android:textColor="@drawable/radio_text_selector"
                     android:text="Candidate" />
 
                 <RadioButton
@@ -67,7 +70,10 @@
                     android:text="Employer"
                     android:gravity="center"
                     android:button="@null"
-                    android:padding="12dp" />
+                    android:background="@drawable/radio_selector"
+                    android:textColor="@drawable/radio_text_selector"
+                    android:padding="12dp"
+                    android:layout_marginLeft="6dp" />
             </RadioGroup>
 
             <View
@@ -142,5 +148,4 @@
                 android:padding="8dp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

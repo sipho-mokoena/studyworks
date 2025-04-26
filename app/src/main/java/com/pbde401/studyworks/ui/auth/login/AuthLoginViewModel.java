@@ -48,9 +48,10 @@ public class AuthLoginViewModel extends ViewModel {
                         FirebaseUser firebaseUser = task.getResult().getUser();
                         fetchUserData(firebaseUser);
                     } else {
-                        isLoading.setValue(false);
                         error.setValue("Login failed. Please check your credentials and try again.");
                     }
+
+                    isLoading.setValue(false);
                 })
                 .addOnFailureListener(e -> {
                     isLoading.setValue(false);
@@ -64,19 +65,15 @@ public class AuthLoginViewModel extends ViewModel {
                 if (user != null) {
                     try {
                         setUserRole(user.getRole());
-                        isLoading.setValue(false);
                         authState.setValue(true);
                     } catch (IllegalArgumentException e) {
-                        isLoading.setValue(false);
                         error.setValue("Invalid user role retrieved from the database.");
                     }
                 } else {
-                    isLoading.setValue(false);
                     error.setValue("User account not found.");
                 }
             })
             .addOnFailureListener(e -> {
-                isLoading.setValue(false);
                 error.setValue("Error fetching user data: " + e.getMessage());
             });
     }
