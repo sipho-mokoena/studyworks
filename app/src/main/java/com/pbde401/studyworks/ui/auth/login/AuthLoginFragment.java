@@ -59,11 +59,7 @@ public class AuthLoginFragment extends Fragment {
         });
         
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading) {
-                loginButton.setEnabled(false);
-            } else {
-                loginButton.setEnabled(true);
-            }
+            loginButton.setEnabled(!isLoading);
         });
         
         viewModel.getError().observe(getViewLifecycleOwner(), errorMessage -> {

@@ -35,10 +35,10 @@ public class CandidateMainActivity extends AppCompatActivity {
                 .findFragmentById(R.id.nav_host_fragment_activity_candidate_main);
         
         if (navHostFragment != null) {
-            navController = navHostFragment.getNavController();
-            
             // Set up bottom navigation
             BottomNavigationView bottomNav = findViewById(R.id.menu_candidate_bottom_navigation);
+
+            navController = navHostFragment.getNavController();
             appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_candidate_dashboard,
                 R.id.navigation_candidate_jobs,
