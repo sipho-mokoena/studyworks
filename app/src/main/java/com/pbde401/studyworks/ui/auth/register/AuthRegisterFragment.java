@@ -80,7 +80,7 @@ public class AuthRegisterFragment extends Fragment {
         
         // Setup login link
         loginLinkTextView.setOnClickListener(v -> {
-            Navigation.findNavController(v).navigate(R.id.action_home_to_login);
+            Navigation.findNavController(v).navigate(R.id.navigation_login);
         });
 
         return view;
@@ -131,10 +131,10 @@ public class AuthRegisterFragment extends Fragment {
         try {
             if (userRole == UserRole.CANDIDATE) {
                 Navigation.findNavController(requireView())
-                        .navigate(R.id.action_navigation_login_to_candidate_dashboard);
+                        .navigate(R.id.action_navigation_register_to_activity_candidate_main);
             } else if (userRole == UserRole.EMPLOYER) {
                 Navigation.findNavController(requireView())
-                        .navigate(R.id.action_navigation_login_to_employer_dashboard);
+                        .navigate(R.id.action_navigation_register_to_activity_employer_main);
             }
         } catch (Exception e) {
             Snackbar.make(requireView(), "Navigation error: " + e.getMessage(), Snackbar.LENGTH_LONG).show();

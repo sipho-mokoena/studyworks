@@ -25,7 +25,6 @@ public class AuthLoginFragment extends Fragment {
     private AuthLoginViewModel viewModel;
     private EditText emailEditText;
     private EditText passwordEditText;
-    private RadioGroup roleRadioGroup;
     private Button loginButton;
     private TextView registerLinkText;
     
@@ -105,10 +104,10 @@ public class AuthLoginFragment extends Fragment {
         try {
             if (userRole == UserRole.CANDIDATE) {
                 Navigation.findNavController(requireView())
-                    .navigate(R.id.action_navigation_login_to_candidate_dashboard);
+                    .navigate(R.id.action_navigation_login_to_activity_candidate_main);
             } else if (userRole == UserRole.EMPLOYER) {
                 Navigation.findNavController(requireView())
-                    .navigate(R.id.action_navigation_login_to_employer_dashboard);
+                    .navigate(R.id.action_navigation_login_to_activity_employer_main);
             }
         } catch (Exception e) {
             Snackbar.make(requireView(), "Navigation error: " + e.getMessage(), Snackbar.LENGTH_LONG).show();

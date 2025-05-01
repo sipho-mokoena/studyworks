@@ -40,7 +40,7 @@ public class CandidateMainActivity extends AppCompatActivity {
 
             navController = navHostFragment.getNavController();
             appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_candidate_dashboard,
+//                R.id.navigation_candidate_dashboard,
                 R.id.navigation_candidate_jobs,
                 R.id.navigation_candidate_applications,
                 R.id.navigation_candidate_chats,

@@ -34,7 +34,7 @@ public class EmployerMainActivity extends AppCompatActivity {
 
             navController = navHostFragment.getNavController();
             appBarConfiguration = new AppBarConfiguration.Builder(
-                    R.id.navigation_employer_dashboard,
+//                    R.id.navigation_employer_dashboard,
                     R.id.navigation_employer_jobs,
                     R.id.navigation_employer_applications,
                     R.id.navigation_employer_chats,

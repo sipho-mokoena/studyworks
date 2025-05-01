@@ -152,8 +152,6 @@ public class HomeFragment extends Fragment {
         autoScrollHandler.removeCallbacks(autoScrollRunnable);
     }
 
-    // Optionally remove TabLayout if it looks odd:
-    // new TabLayoutMediator(carouselIndicator, viewPager, (tab, position) -> {}).attach();
 
     private void setupFeatures(View view) {
         LinearLayout featuresContainer = view.findViewById(R.id.featuresContainer);
@@ -188,12 +186,12 @@ public class HomeFragment extends Fragment {
 
     private void navigateToRegister() {
         Navigation.findNavController(requireView())
-                .navigate(R.id.action_home_to_register);
+                .navigate(R.id.action_navigation_home_to_navigation_register);
     }
 
     private void navigateToLogin() {
         Navigation.findNavController(requireView())
-                .navigate(R.id.action_home_to_login);
+                .navigate(R.id.action_navigation_home_to_navigation_login);
     }
 
     private static class CarouselAdapter extends RecyclerView.Adapter<CarouselAdapter.CarouselViewHolder> {
@@ -221,7 +219,6 @@ public class HomeFragment extends Fragment {
             String nameWithoutExt = items[position].getForegroundDrawable().replace(".jpg", "");
             int resId = holder.itemView.getContext().getResources().getIdentifier(
                 nameWithoutExt, "drawable", holder.itemView.getContext().getPackageName());
-            // ...existing code for fallback/placeholder if needed...
             holder.imageView.setImageResource(resId);
         }
 
