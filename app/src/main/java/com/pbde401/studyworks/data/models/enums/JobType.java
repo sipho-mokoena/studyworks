@@ -1,8 +1,15 @@
 package com.pbde401.studyworks.data.models.enums;
 
+import com.google.firebase.firestore.PropertyName;
+
 public enum JobType {
+    @PropertyName("Full-time")
     FULL_TIME("Full-time"),
+    
+    @PropertyName("Part-time")
     PART_TIME("Part-time"),
+    
+    @PropertyName("Contract")
     CONTRACT("Contract");
 
     private final String value;
@@ -11,6 +18,7 @@ public enum JobType {
         this.value = value;
     }
 
+    @PropertyName("jobType")
     public String getValue() {
         return value;
     }

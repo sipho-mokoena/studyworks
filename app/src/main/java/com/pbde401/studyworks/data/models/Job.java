@@ -4,36 +4,42 @@ import androidx.annotation.NonNull;
 import com.pbde401.studyworks.data.models.enums.JobType;
 import com.pbde401.studyworks.data.models.enums.WorkMode;
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Job extends BaseModel {
     @NonNull
-    private String title;
+    private String title = "";
     @NonNull
-    private String companyId;
+    private String companyId = "";
     @NonNull
-    private String companyName;
+    private String companyName = "";
     @NonNull
-    private String location;
+    private String location = "";
     @NonNull
-    private JobType type;
+    private JobType type = JobType.FULL_TIME;
     @NonNull
-    private WorkMode workMode;
+    private WorkMode workMode = WorkMode.ON_SITE;
     @NonNull
-    private String level;
+    private String level = "";
     @NonNull
-    private String description;
+    private String description = "";
     @NonNull
-    private List<String> requirements;
+    private List<String> requirements = new ArrayList<>();
     @NonNull
-    private List<String> responsibilities;
+    private List<String> responsibilities = new ArrayList<>();
     @NonNull
-    private List<String> benefits;
+    private List<String> benefits = new ArrayList<>();
     @NonNull
-    private List<String> candidateIds;
+    private List<String> candidateIds = new ArrayList<>();
     @NonNull
-    private String salary;
-    private boolean active;
+    private String salary = "";
+    private boolean active = true;
+
+    // Required no-argument constructor for Firebase
+    public Job() {
+        super();
+    }
 
     public Job(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
               @NonNull String title, @NonNull String companyId, @NonNull String companyName,
@@ -50,15 +56,14 @@ public class Job extends BaseModel {
         this.workMode = workMode;
         this.level = level;
         this.description = description;
-        this.requirements = requirements;
-        this.responsibilities = responsibilities;
-        this.benefits = benefits;
-        this.candidateIds = candidateIds;
+        this.requirements = requirements != null ? requirements : new ArrayList<>();
+        this.responsibilities = responsibilities != null ? responsibilities : new ArrayList<>();
+        this.benefits = benefits != null ? benefits : new ArrayList<>();
+        this.candidateIds = candidateIds != null ? candidateIds : new ArrayList<>();
         this.salary = salary;
         this.active = active;
     }
 
-    // Getters and setters
     @NonNull
     public String getTitle() {
         return title;
@@ -137,7 +142,7 @@ public class Job extends BaseModel {
     }
 
     public void setRequirements(@NonNull List<String> requirements) {
-        this.requirements = requirements;
+        this.requirements = requirements != null ? requirements : new ArrayList<>();
     }
 
     @NonNull
@@ -146,7 +151,7 @@ public class Job extends BaseModel {
     }
 
     public void setResponsibilities(@NonNull List<String> responsibilities) {
-        this.responsibilities = responsibilities;
+        this.responsibilities = responsibilities != null ? responsibilities : new ArrayList<>();
     }
 
     @NonNull
@@ -155,7 +160,7 @@ public class Job extends BaseModel {
     }
 
     public void setBenefits(@NonNull List<String> benefits) {
-        this.benefits = benefits;
+        this.benefits = benefits != null ? benefits : new ArrayList<>();
     }
 
     @NonNull
@@ -164,7 +169,7 @@ public class Job extends BaseModel {
     }
 
     public void setCandidateIds(@NonNull List<String> candidateIds) {
-        this.candidateIds = candidateIds;
+        this.candidateIds = candidateIds != null ? candidateIds : new ArrayList<>();
     }
 
     @NonNull
