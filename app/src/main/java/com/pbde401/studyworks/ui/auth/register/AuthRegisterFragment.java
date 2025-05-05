@@ -97,7 +97,7 @@ public class AuthRegisterFragment extends Fragment {
             selectedRole = UserRole.EMPLOYER;
         }
         
-        viewModel.setUserRole(selectedRole);
+//        viewModel.setUserRole(selectedRole);
 
         // Basic validation
         if (TextUtils.isEmpty(email)) {
