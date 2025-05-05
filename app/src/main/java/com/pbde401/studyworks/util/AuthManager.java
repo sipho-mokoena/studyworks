@@ -14,16 +14,45 @@ import java.util.UUID;
 
 public class AuthManager {
     private static AuthManager instance;
-    private final FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    private final UserRepository userRepository = new UserRepository();
+    private final FirebaseAuth firebaseAuth;
+    private final UserRepository userRepository;
     private final MutableLiveData<User> currentUser = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isAuthenticated = new MutableLiveData<>(false);
 
     private AuthManager() {
-        // Initialize with current Firebase user if logged in
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        if (firebaseUser != null) {
-            userRepository.getUserByEmail(firebaseUser.getEmail())
+        // Initialize Firebase Auth with persistence enabled
+        firebaseAuth = FirebaseAuth.getInstance();
+//        firebaseAuth.setPersistenceEnabled(true);
+        userRepository = new UserRepository();
+
+        // Set up auth state listener
+        firebaseAuth.addAuthStateListener(auth -> {
+            FirebaseUser firebaseUser = auth.getCurrentUser();
+            if (firebaseUser != null) {
+                userRepository.getUserByEmail(firebaseUser.getEmail())
+                        .addOnSuccessListener(user -> {
+                            if (user != null) {
+                                currentUser.setValue(user);
+                                isAuthenticated.setValue(true);
+                            } else {
+                                // Handle case where user exists in Firebase Auth but not in Firestore
+                                logout();
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            // Handle failure to fetch user data
+                            logout();
+                        });
+            } else {
+                currentUser.setValue(null);
+                isAuthenticated.setValue(false);
+            }
+        });
+
+        // Check initial auth state
+        FirebaseUser currentFirebaseUser = firebaseAuth.getCurrentUser();
+        if (currentFirebaseUser != null) {
+            userRepository.getUserByEmail(currentFirebaseUser.getEmail())
                     .addOnSuccessListener(user -> {
                         if (user != null) {
                             currentUser.setValue(user);
@@ -49,16 +78,7 @@ public class AuthManager {
     }
 
     public Task<AuthResult> login(String email, String password) {
-        return firebaseAuth.signInWithEmailAndPassword(email, password)
-                .addOnSuccessListener(authResult -> {
-                    if (authResult.getUser() != null) {
-                        userRepository.getUserByEmail(email)
-                                .addOnSuccessListener(user -> {
-                                    currentUser.setValue(user);
-                                    isAuthenticated.setValue(true);
-                                });
-                    }
-                });
+        return firebaseAuth.signInWithEmailAndPassword(email, password);
     }
 
     public Task<AuthResult> register(String email, String password, String fullName, UserRole role) {
@@ -66,7 +86,6 @@ public class AuthManager {
                 .addOnSuccessListener(authResult -> {
                     FirebaseUser firebaseUser = authResult.getUser();
                     if (firebaseUser != null) {
-                        // Create user document in Firestore
                         String userId = UUID.randomUUID().toString();
                         User user = new User(
                                 userId,
@@ -89,11 +108,9 @@ public class AuthManager {
 
     public void logout() {
         firebaseAuth.signOut();
-        currentUser.setValue(null);
-        isAuthenticated.setValue(false);
     }
 
     public boolean isLoggedIn() {
-        return firebaseAuth.getCurrentUser() != null;
+        return firebaseAuth.getCurrentUser() != null && currentUser.getValue() != null;
     }
 }
