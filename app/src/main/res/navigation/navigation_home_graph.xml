@@ -16,6 +16,16 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_register"
             app:destination="@id/navigation_register" />
+        <action
+            android:id="@+id/action_navigation_home_to_activity_candidate_main"
+            app:destination="@id/activity_candidate_main"
+            app:popUpTo="@id/navigation_home"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_navigation_home_to_activity_employer_main"
+            app:destination="@id/activity_employer_main"
+            app:popUpTo="@id/navigation_home"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
