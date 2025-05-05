@@ -1,8 +1,15 @@
 package com.pbde401.studyworks.data.models.enums;
 
+import com.google.firebase.firestore.PropertyName;
+
 public enum WorkMode {
+    @PropertyName("Remote")
     REMOTE("Remote"),
+    
+    @PropertyName("On-site")
     ON_SITE("On-site"),
+    
+    @PropertyName("Hybrid")
     HYBRID("Hybrid");
 
     private final String value;
@@ -11,6 +18,7 @@ public enum WorkMode {
         this.value = value;
     }
 
+    @PropertyName("workMode")
     public String getValue() {
         return value;
     }
