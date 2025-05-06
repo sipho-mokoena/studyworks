@@ -8,6 +8,9 @@ import com.google.firebase.firestore.Query;
 import com.pbde401.studyworks.data.models.Chat;
 import com.pbde401.studyworks.data.models.Message;
 import com.pbde401.studyworks.data.models.enums.UserRole;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ChatsRepository {
@@ -204,10 +207,14 @@ public class ChatsRepository {
         String candidateId = document.getString("candidateId");
         String employerId = document.getString("employerId");
         String lastMessage = document.getString("lastMessage");
-        Date lastMessageAt = document.getDate("lastMessageAt");
-        Date createdAt = document.getDate("createdAt");
-        Date updatedAt = document.getDate("updatedAt");
+        String lastMessageAtString = document.getString("lastMessageAt");
+        String createdAtString = document.getString("createdAt");
+        String updatedAtString = document.getString("updatedAt");
 
+        Date lastMessageAt = parseDate(lastMessageAtString);
+        Date createdAt = parseDate(createdAtString);
+        Date updatedAt = parseDate(updatedAtString);
+        
         return new Chat(id, createdAt, updatedAt, jobId, candidateId, employerId, lastMessage, lastMessageAt);
     }
 
@@ -235,5 +242,17 @@ public class ChatsRepository {
         Date updatedAt = document.getDate("updatedAt");
 
         return new Message(id, createdAt, updatedAt, chatId, senderId, senderRole, content, timestamp);
+    }
+    
+    private Date parseDate(String dateString) {
+        if (dateString == null) return null;
+        try {
+            SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return iso8601Format.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

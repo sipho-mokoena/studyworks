@@ -49,22 +49,24 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
     }
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
-        private final ShapeableImageView ivEmployerAvatar;
+        private final TextView tvContactCharacter;
         private final TextView tvEmployerName;
         private final TextView tvLastMessage;
         private final TextView tvLastMessageTime;
 
         ChatViewHolder(View itemView) {
             super(itemView);
-            ivEmployerAvatar = itemView.findViewById(R.id.ivEmployerAvatar);
+            tvContactCharacter = itemView.findViewById(R.id.tvContactCharacter);
             tvEmployerName = itemView.findViewById(R.id.tvEmployerName);
             tvLastMessage = itemView.findViewById(R.id.tvLastMessage);
             tvLastMessageTime = itemView.findViewById(R.id.tvLastMessageTime);
         }
 
         void bind(Chat chat) {
-            // TODO: Load employer name from UserRepository
-            tvEmployerName.setText("Company Name"); // Placeholder
+            // Set the first character of the employer name
+            String employerName = chat.getEmployerId(); // This should be replaced with actual name later
+            tvContactCharacter.setText(employerName.substring(0, 1).toUpperCase());
+            tvEmployerName.setText(employerName);
             
             String lastMessage = chat.getLastMessage();
             tvLastMessage.setText(lastMessage != null ? lastMessage : "No messages yet");
