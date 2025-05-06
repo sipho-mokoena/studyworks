@@ -9,6 +9,8 @@ public class Application extends BaseModel {
     @NonNull
     private String jobId;
     @NonNull
+    private String jobTitle;
+    @NonNull
     private String candidateId;
     @NonNull
     private String employerId;
@@ -25,19 +27,28 @@ public class Application extends BaseModel {
     @Nullable
     private String linkedinUrl;
     @Nullable
-    private Float progress;
+    private Integer progress;
     @Nullable
     private ApplicationInterview applicationInterview;
 
     public Application(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
-                      @NonNull String jobId, @NonNull String candidateId, @NonNull String employerId,
-                      @NonNull ApplicationStatus status, @NonNull Date appliedAt) {
+                      @NonNull String jobId, @NonNull String candidateId,
+                      @NonNull String employerId, @NonNull ApplicationStatus status, @NonNull Date appliedAt,
+                      @Nullable String resumeUrl, @Nullable String coverLetter,
+                      @Nullable String portfolioUrl, @Nullable String linkedinUrl,
+                      @Nullable Integer progress, @Nullable ApplicationInterview applicationInterview) {
         super(id, createdAt, updatedAt);
         this.jobId = jobId;
         this.candidateId = candidateId;
         this.employerId = employerId;
         this.status = status;
         this.appliedAt = appliedAt;
+        this.resumeUrl = resumeUrl;
+        this.coverLetter = coverLetter;
+        this.portfolioUrl = portfolioUrl;
+        this.linkedinUrl = linkedinUrl;
+        this.progress = progress;
+        this.applicationInterview = applicationInterview;
     }
 
     // Getters and setters
@@ -48,6 +59,15 @@ public class Application extends BaseModel {
 
     public void setJobId(@NonNull String jobId) {
         this.jobId = jobId;
+    }
+
+    @NonNull
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(@NonNull String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 
     @NonNull
@@ -123,11 +143,11 @@ public class Application extends BaseModel {
     }
 
     @Nullable
-    public Float getProgress() {
+    public Integer getProgress() {
         return progress;
     }
 
-    public void setProgress(@Nullable Float progress) {
+    public void setProgress(@Nullable Integer progress) {
         this.progress = progress;
     }
 
