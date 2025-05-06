@@ -44,6 +44,144 @@ public class ApplicationsRepository {
         return applicationsLiveData;
     }
 
+    public LiveData<Application> getApplication(String applicationId) {
+        MutableLiveData<Application> applicationLiveData = new MutableLiveData<>();
+
+        db.collection(APPLICATIONS_COLLECTION)
+            .document(applicationId)
+            .get()
+            .addOnSuccessListener(document -> {
+                if (document.exists()) {
+                    applicationLiveData.setValue(documentToApplication(document));
+                } else {
+                    applicationLiveData.setValue(null);
+                }
+            })
+            .addOnFailureListener(e -> applicationLiveData.setValue(null));
+
+        return applicationLiveData;
+    }
+
+    public LiveData<Application> getApplicationByJobAndCandidateId(String jobId, String userId) {
+        MutableLiveData<Application> applicationLiveData = new MutableLiveData<>();
+
+        db.collection(APPLICATIONS_COLLECTION)
+            .whereEqualTo("jobId", jobId)
+            .whereEqualTo("candidateId", userId)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                if (!queryDocumentSnapshots.isEmpty()) {
+                    applicationLiveData.setValue(documentToApplication(queryDocumentSnapshots.getDocuments().get(0)));
+                } else {
+                    applicationLiveData.setValue(null);
+                }
+            })
+            .addOnFailureListener(e -> applicationLiveData.setValue(null));
+
+        return applicationLiveData;
+    }
+
+    public LiveData<List<Application>> getJobApplications(String jobId) {
+        MutableLiveData<List<Application>> applicationsLiveData = new MutableLiveData<>();
+
+        db.collection(APPLICATIONS_COLLECTION)
+            .whereEqualTo("jobId", jobId)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                List<Application> applications = new ArrayList<>();
+                for (DocumentSnapshot document : queryDocumentSnapshots) {
+                    applications.add(documentToApplication(document));
+                }
+                applicationsLiveData.setValue(applications);
+            })
+            .addOnFailureListener(e -> applicationsLiveData.setValue(new ArrayList<>()));
+
+        return applicationsLiveData;
+    }
+
+    public LiveData<List<Application>> getEmployerApplications(String employerId) {
+        MutableLiveData<List<Application>> applicationsLiveData = new MutableLiveData<>();
+
+        db.collection(APPLICATIONS_COLLECTION)
+            .whereEqualTo("employerId", employerId)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                List<Application> applications = new ArrayList<>();
+                for (DocumentSnapshot document : queryDocumentSnapshots) {
+                    applications.add(documentToApplication(document));
+                }
+                applicationsLiveData.setValue(applications);
+            })
+            .addOnFailureListener(e -> applicationsLiveData.setValue(new ArrayList<>()));
+
+        return applicationsLiveData;
+    }
+
+    public void createApplication(Application application) {
+        db.collection(APPLICATIONS_COLLECTION)
+            .document(application.getId())
+            .set(applicationToMap(application));
+    }
+
+    public void updateApplication(String applicationId, Application application) {
+        db.collection(APPLICATIONS_COLLECTION)
+            .document(applicationId)
+            .update(applicationToMap(application));
+    }
+
+    public void updateApplicationStatus(String applicationId, ApplicationStatus status) {
+        int progress = calculateProgress(status);
+        db.collection(APPLICATIONS_COLLECTION)
+            .document(applicationId)
+            .update("status", status.toString(), "progress", progress);
+    }
+
+    public void deleteApplication(String applicationId) {
+        db.collection(APPLICATIONS_COLLECTION)
+            .document(applicationId)
+            .delete();
+    }
+
+    private int calculateProgress(ApplicationStatus status) {
+        switch (status) {
+            case INTERVIEW:
+                return 70;
+            case ACCEPTED:
+            case REJECTED:
+                return 100;
+            case WITHDRAWN:
+                return 0;
+            default:
+                return 40;
+        }
+    }
+
+    @NonNull
+    private java.util.Map<String, Object> applicationToMap(Application application) {
+        java.util.Map<String, Object> map = new java.util.HashMap<>();
+        map.put("id", application.getId());
+        map.put("jobId", application.getJobId());
+        map.put("candidateId", application.getCandidateId());
+        map.put("employerId", application.getEmployerId());
+        map.put("status", application.getStatus().toString());
+        map.put("coverLetter", application.getCoverLetter());
+        map.put("resumeUrl", application.getResumeUrl());
+        map.put("portfolioUrl", application.getPortfolioUrl());
+        map.put("linkedinUrl", application.getLinkedinUrl());
+        map.put("progress", application.getProgress());
+        map.put("createdAt", formatDate(application.getCreatedAt()));
+        map.put("updatedAt", formatDate(application.getUpdatedAt()));
+        map.put("appliedAt", formatDate(application.getAppliedAt()));
+        return map;
+    }
+
+    private String formatDate(Date date) {
+        if (date == null) return null;
+        SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return iso8601Format.format(date);
+    }
+
     @NonNull
     private Application documentToApplication(DocumentSnapshot document) {
         String id = document.getId();
