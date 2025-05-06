@@ -1,7 +1,9 @@
 package com.pbde401.studyworks.ui.candidate;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
@@ -10,13 +12,16 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.pbde401.studyworks.MainActivity;
 import com.pbde401.studyworks.R;
 import com.pbde401.studyworks.databinding.ActivityCandidateMainBinding;
+import com.pbde401.studyworks.util.AuthManager;
 
 public class CandidateMainActivity extends AppCompatActivity {
     private ActivityCandidateMainBinding binding;
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
+    private AuthManager authManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,23 +29,22 @@ public class CandidateMainActivity extends AppCompatActivity {
         binding = ActivityCandidateMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Set up toolbar if needed
+        // Initialize AuthManager
+        authManager = AuthManager.getInstance();
+
+        // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
+        setSupportActionBar(toolbar);
 
         // Set up navigation
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment_activity_candidate_main);
         
         if (navHostFragment != null) {
-            // Set up bottom navigation
             BottomNavigationView bottomNav = findViewById(R.id.menu_candidate_bottom_navigation);
 
             navController = navHostFragment.getNavController();
             appBarConfiguration = new AppBarConfiguration.Builder(
-//                R.id.navigation_candidate_dashboard,
                 R.id.navigation_candidate_jobs,
                 R.id.navigation_candidate_applications,
                 R.id.navigation_candidate_chats,
@@ -50,6 +54,29 @@ public class CandidateMainActivity extends AppCompatActivity {
             NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
             NavigationUI.setupWithNavController(bottomNav, navController);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            handleLogout();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void handleLogout() {
+        authManager.logout();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     @Override
