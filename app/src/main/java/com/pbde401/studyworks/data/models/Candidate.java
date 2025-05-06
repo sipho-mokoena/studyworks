@@ -1,26 +1,28 @@
 package com.pbde401.studyworks.data.models;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.pbde401.studyworks.data.models.enums.UserRole;
 import java.util.Date;
+import java.util.Map;
 
 public class Candidate extends User {
-    @NonNull
-    private CandidateProfile candidateProfile;
+    @Nullable
+    private Map<String, Object> profile;
 
     public Candidate(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
                     @NonNull String uid, @NonNull String fullName, @NonNull String email,
-                    @NonNull CandidateProfile candidateProfile) {
+                    @Nullable Map<String, Object> profile) {
         super(id, createdAt, updatedAt, uid, fullName, email, UserRole.CANDIDATE);
-        this.candidateProfile = candidateProfile;
+        this.profile = profile;
     }
 
-    @NonNull
-    public CandidateProfile getProfile() {
-        return candidateProfile;
+    @Nullable
+    public Map<String, Object> getProfile() {
+        return profile;
     }
 
-    public void setProfile(@NonNull CandidateProfile candidateProfile) {
-        this.candidateProfile = candidateProfile;
+    public void setProfile(@Nullable Map<String, Object> profile) {
+        this.profile = profile;
     }
 }

@@ -15,6 +15,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.ArrayList;
+import java.util.List;
+import com.google.firebase.firestore.QuerySnapshot;
+import android.util.Log;
 
 public class UserRepository {
 
@@ -98,5 +102,161 @@ public class UserRepository {
         return db.collection(USERS_COLLECTION)
                 .document(userId)
                 .update(updates);
+    }
+
+    public Task<List<Candidate>> getCandidates() {
+        return db.collection(USERS_COLLECTION)
+                .whereEqualTo("role", UserRole.CANDIDATE.getRoleString())
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        List<Candidate> candidates = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            User user = documentToUser(document);
+                            if (user instanceof Candidate) {
+                                candidates.add((Candidate) user);
+                            }
+                        }
+                        return candidates;
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
+    public Task<List<Employer>> getEmployers() {
+        return db.collection(USERS_COLLECTION)
+                .whereEqualTo("role", UserRole.EMPLOYER.getRoleString())
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        List<Employer> employers = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            User user = documentToUser(document);
+                            if (user instanceof Employer) {
+                                employers.add((Employer) user);
+                            }
+                        }
+                        return employers;
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
+    public Task<Candidate> getCandidateById(String candidateId) {
+        return db.collection(USERS_COLLECTION)
+                .document(candidateId)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && task.getResult().exists()) {
+                        User user = documentToUser(task.getResult());
+                        if (user instanceof Candidate) {
+                            return (Candidate) user;
+                        }
+                    }
+                    return null;
+                });
+    }
+
+    public Task<List<Candidate>> getManyCandidatesByIds(List<String> candidateIds) {
+        return db.collection(USERS_COLLECTION)
+                .whereEqualTo("role", UserRole.CANDIDATE.getRoleString())
+                .whereIn("id", candidateIds)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        List<Candidate> candidates = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                            User user = documentToUser(document);
+                            if (user instanceof Candidate) {
+                                candidates.add((Candidate) user);
+                            }
+                        }
+                        return candidates;
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
+    public Task<List<Employer>> getManyEmployersByIds(List<String> employerIds) {
+        return db.collection(USERS_COLLECTION)
+                .whereEqualTo("role", UserRole.EMPLOYER.getRoleString())
+                .whereIn("id", employerIds)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        List<Employer> employers = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult()) {
+                            User user = documentToUser(document);
+                            if (user instanceof Employer) {
+                                employers.add((Employer) user);
+                            }
+                        }
+                        return employers;
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
+    public Task<List<Candidate>> searchCandidatesByFullname(String fullName) {
+        return db.collection(USERS_COLLECTION)
+                .whereEqualTo("role", UserRole.CANDIDATE.getRoleString())
+                .whereEqualTo("fullName", fullName)
+                .limit(10)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        List<Candidate> candidates = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                            User user = documentToUser(document);
+                            if (user instanceof Candidate) {
+                                candidates.add((Candidate) user);
+                            }
+                        }
+                        return candidates;
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
+    public Task<Candidate> setCandidateProfile(Candidate candidate) {
+        if (candidate.getRole() != UserRole.CANDIDATE) {
+            throw new IllegalArgumentException("User is not a candidate");
+        }
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("profile", candidate.getProfile());
+        updates.put("updatedAt", new Date());
+
+        return db.collection(USERS_COLLECTION)
+                .document(candidate.getId())
+                .update(updates)
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        candidate.setUpdatedAt(new Date());
+                        return candidate;
+                    }
+                    throw task.getException();
+                });
+    }
+
+    public Task<Employer> setEmployerProfile(Employer employer) {
+        if (employer.getRole() != UserRole.EMPLOYER) {
+            throw new IllegalArgumentException("User is not an employer");
+        }
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("profile", employer.getProfile());
+        updates.put("updatedAt", new Date());
+
+        return db.collection(USERS_COLLECTION)
+                .document(employer.getId())
+                .update(updates)
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        employer.setUpdatedAt(new Date());
+                        return employer;
+                    }
+                    throw task.getException();
+                });
     }
 }
