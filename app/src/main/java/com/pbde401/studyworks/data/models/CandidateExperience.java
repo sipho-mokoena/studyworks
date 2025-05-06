@@ -10,14 +10,11 @@ public class CandidateExperience {
     private String company;
     @NonNull
     private Date startDate;
-    @NonNull
     private Date endDate;
-    @NonNull
     private String description;
 
     public CandidateExperience(@NonNull String title, @NonNull String company,
-                               @NonNull Date startDate, @NonNull Date endDate,
-                               @NonNull String description) {
+                              @NonNull Date startDate, Date endDate, String description) {
         this.title = title;
         this.company = company;
         this.startDate = startDate;
@@ -52,21 +49,19 @@ public class CandidateExperience {
         this.startDate = startDate;
     }
 
-    @NonNull
     public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(@NonNull Date endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
-    @NonNull
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(@NonNull String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 }

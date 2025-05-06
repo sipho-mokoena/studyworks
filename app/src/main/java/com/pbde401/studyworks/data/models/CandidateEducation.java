@@ -10,14 +10,11 @@ public class CandidateEducation {
     private String institution;
     @NonNull
     private Date startDate;
-    @NonNull
     private Date endDate;
-    @NonNull
     private String description;
 
     public CandidateEducation(@NonNull String degree, @NonNull String institution,
-                              @NonNull Date startDate, @NonNull Date endDate,
-                              @NonNull String description) {
+                             @NonNull Date startDate, Date endDate, String description) {
         this.degree = degree;
         this.institution = institution;
         this.startDate = startDate;
@@ -52,21 +49,19 @@ public class CandidateEducation {
         this.startDate = startDate;
     }
 
-    @NonNull
     public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(@NonNull Date endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
-    @NonNull
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(@NonNull String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 }
