@@ -38,24 +38,24 @@ public class Validators {
         return application;
     }
 
-    public static Candidate validateCandidate(@NonNull Candidate candidate) {
-        if (candidate.getUid() == null || candidate.getUid().isEmpty()) {
-            throw new ValidationException("UID is required");
-        }
-        if (candidate.getFullName() == null || candidate.getFullName().isEmpty()) {
-            throw new ValidationException("Full name is required");
-        }
-        if (candidate.getEmail() == null || candidate.getEmail().isEmpty()) {
-            throw new ValidationException("Email is required");
-        }
-        if (candidate.getProfile() == null) {
-            throw new ValidationException("Profile is required");
-        }
-
-        validateProfile(candidate.getProfile());
-        
-        return candidate;
-    }
+//    public static Candidate validateCandidate(@NonNull Candidate candidate) {
+//        if (candidate.getUid() == null || candidate.getUid().isEmpty()) {
+//            throw new ValidationException("UID is required");
+//        }
+//        if (candidate.getFullName() == null || candidate.getFullName().isEmpty()) {
+//            throw new ValidationException("Full name is required");
+//        }
+//        if (candidate.getEmail() == null || candidate.getEmail().isEmpty()) {
+//            throw new ValidationException("Email is required");
+//        }
+//        if (candidate.getProfile() == null) {
+//            throw new ValidationException("Profile is required");
+//        }
+//
+//        validateProfile(candidate.getProfile());
+//
+//        return candidate;
+//    }
 
     public static CandidateProfile validateProfile(@NonNull CandidateProfile candidateProfile) {
         if (candidateProfile.getPhone() == null || candidateProfile.getPhone().isEmpty()) {
@@ -112,24 +112,24 @@ public class Validators {
         return chat;
     }
 
-    public static Employer validateEmployer(@NonNull Employer employer) {
-        if (employer.getUid() == null || employer.getUid().isEmpty()) {
-            throw new ValidationException("UID is required");
-        }
-        if (employer.getFullName() == null || employer.getFullName().isEmpty()) {
-            throw new ValidationException("Full name is required");
-        }
-        if (employer.getEmail() == null || employer.getEmail().isEmpty()) {
-            throw new ValidationException("Email is required");
-        }
-        
-        EmployerProfile profile = employer.getProfile();
-        if (profile != null) {
-            validateEmployerProfile(profile);
-        }
-        
-        return employer;
-    }
+//    public static Employer validateEmployer(@NonNull Employer employer) {
+//        if (employer.getUid() == null || employer.getUid().isEmpty()) {
+//            throw new ValidationException("UID is required");
+//        }
+//        if (employer.getFullName() == null || employer.getFullName().isEmpty()) {
+//            throw new ValidationException("Full name is required");
+//        }
+//        if (employer.getEmail() == null || employer.getEmail().isEmpty()) {
+//            throw new ValidationException("Email is required");
+//        }
+//
+//        EmployerProfile profile = employer.getProfile();
+//        if (profile != null) {
+//            validateEmployerProfile(profile);
+//        }
+//
+//        return employer;
+//    }
 
     public static EmployerProfile validateEmployerProfile(@NonNull EmployerProfile profile) {
         if (profile.getCompanyName() == null || profile.getCompanyName().isEmpty()) {
@@ -195,13 +195,13 @@ public class Validators {
         return user;
     }
 
-    public static JobFilters validateFilters(@NonNull JobFilters jobFilters) {
-        if (jobFilters.getType() == null) {
-            throw new ValidationException("Type filters are required");
-        }
-        if (jobFilters.getWorkMode() == null) {
-            throw new ValidationException("Work mode filters are required");
-        }
-        return jobFilters;
-    }
+//    public static JobFilters validateFilters(@NonNull JobFilters jobFilters) {
+//        if (jobFilters.getType() == null) {
+//            throw new ValidationException("Type filters are required");
+//        }
+//        if (jobFilters.getWorkMode() == null) {
+//            throw new ValidationException("Work mode filters are required");
+//        }
+//        return jobFilters;
+//    }
 }
