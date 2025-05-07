@@ -3,7 +3,6 @@ package com.pbde401.studyworks.ui.candidate.chats;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-
 import com.pbde401.studyworks.data.models.Chat;
 import com.pbde401.studyworks.data.models.User;
 import com.pbde401.studyworks.data.repository.ChatsRepository;
@@ -29,11 +28,5 @@ public class CandidateChatsViewModel extends ViewModel {
 
     public LiveData<List<Chat>> getChats() {
         return chats;
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        // Clean up any observers or resources here
     }
 }

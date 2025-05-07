@@ -7,15 +7,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.pbde401.studyworks.R;
 import com.pbde401.studyworks.data.models.Chat;
+import com.pbde401.studyworks.data.models.Employer;
+import com.pbde401.studyworks.data.models.EmployerProfile;
+import com.pbde401.studyworks.data.repository.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatViewHolder> {
     private List<Chat> chats = new ArrayList<>();
     private final OnChatClickListener listener;
+    private final UserRepository userRepository;
 
     public interface OnChatClickListener {
         void onChatClick(Chat chat);
@@ -23,6 +27,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
 
     public ChatListAdapter(OnChatClickListener listener) {
         this.listener = listener;
+        this.userRepository = new UserRepository();
     }
 
     @NonNull
@@ -63,10 +68,16 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ChatVi
         }
 
         void bind(Chat chat) {
-            // Set the first character of the employer name
-            String employerName = chat.getEmployerId(); // This should be replaced with actual name later
-            tvContactCharacter.setText(employerName.substring(0, 1).toUpperCase());
-            tvEmployerName.setText(employerName);
+            userRepository.getUserById(chat.getEmployerId())
+                .addOnSuccessListener(user -> {
+                    if (user instanceof Employer) {
+                        Employer employer = (Employer) user;
+                        EmployerProfile employerProfile = employer.getProfile();
+                        String companyName = employerProfile.getCompanyName();
+                        tvContactCharacter.setText(companyName.substring(0, 1).toUpperCase());
+                        tvEmployerName.setText(companyName);
+                    }
+                });
             
             String lastMessage = chat.getLastMessage();
             tvLastMessage.setText(lastMessage != null ? lastMessage : "No messages yet");
