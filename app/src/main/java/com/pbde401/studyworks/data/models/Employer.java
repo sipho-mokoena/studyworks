@@ -8,21 +8,21 @@ import java.util.Map;
 
 public class Employer extends User {
     @Nullable
-    private Map<String, Object> profile;
+    private EmployerProfile profile;
 
     public Employer(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
                    @NonNull String uid, @NonNull String fullName, @NonNull String email,
-                   @Nullable Map<String, Object> profile) {
-        super(id, createdAt, updatedAt, uid, fullName, email, UserRole.EMPLOYER);
+                   @Nullable EmployerProfile profile) {
+        super(id, createdAt, updatedAt, uid, fullName, email, UserRole.EMPLOYER, null, profile);
         this.profile = profile;
     }
 
     @Nullable
-    public Map<String, Object> getProfile() {
+    public EmployerProfile getProfile() {
         return profile;
     }
 
     public void setProfile(@Nullable Map<String, Object> profile) {
-        this.profile = profile;
+        this.profile = (EmployerProfile) profile;
     }
 }

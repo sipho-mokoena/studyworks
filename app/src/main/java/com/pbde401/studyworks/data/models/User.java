@@ -1,6 +1,8 @@
 package com.pbde401.studyworks.data.models;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.pbde401.studyworks.data.models.enums.UserRole;
 import java.util.Date;
 
@@ -14,14 +16,23 @@ public class User extends BaseModel {
     @NonNull
     private UserRole role;
 
+    @Nullable
+    private CandidateProfile candidateProfile;
+
+    @Nullable
+    private EmployerProfile employerProfile;
+
     public User(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
-               @NonNull String uid, @NonNull String fullName, @NonNull String email,
-               @NonNull UserRole role) {
+                @NonNull String uid, @NonNull String fullName, @NonNull String email,
+                @NonNull UserRole role, @Nullable CandidateProfile candidateProfile,
+                @Nullable EmployerProfile employerProfile) {
         super(id, createdAt, updatedAt);
         this.uid = uid;
         this.fullName = fullName;
         this.email = email;
         this.role = role;
+        this.candidateProfile = candidateProfile;
+        this.employerProfile = employerProfile;
     }
 
     @NonNull
