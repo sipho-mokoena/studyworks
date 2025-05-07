@@ -139,7 +139,7 @@ public class ChatsRepository {
                 // Update chat's last message info
                 Map<String, Object> updates = new HashMap<>();
                 updates.put("lastMessage", message.getContent());
-                updates.put("lastMessageAt", message.getTimestamp());
+                updates.put("lastMessageAt", dateToIso8601Format(message.getTimestamp()));
                 updateChat(message.getChatId(), updates);
                 messageLiveData.setValue(message);
             })
@@ -225,9 +225,9 @@ public class ChatsRepository {
         map.put("senderId", message.getSenderId());
         map.put("senderRole", message.getSenderRole().toString());
         map.put("content", message.getContent());
-        map.put("timestamp", message.getTimestamp());
-        map.put("createdAt", message.getCreatedAt());
-        map.put("updatedAt", message.getUpdatedAt());
+        map.put("timestamp", dateToIso8601Format(message.getTimestamp()));
+        map.put("createdAt", dateToIso8601Format(message.getCreatedAt()));
+        map.put("updatedAt", dateToIso8601Format(message.getUpdatedAt()));
         return map;
     }
 
@@ -258,5 +258,12 @@ public class ChatsRepository {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String dateToIso8601Format(Date date) {
+        if (date == null) return null;
+        SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return iso8601Format.format(date);
     }
 }
