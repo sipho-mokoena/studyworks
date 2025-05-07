@@ -1,5 +1,6 @@
 package com.pbde401.studyworks.ui.candidate.chats;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -64,10 +65,8 @@ public class CandidateChatsFragment extends Fragment implements ChatListAdapter.
 
     @Override
     public void onChatClick(Chat chat) {
-        // TODO: Navigate to chat detail screen
-        Bundle args = new Bundle();
-        args.putString("chatId", chat.getId());
-//        Navigation.findNavController(requireView())
-//                .navigate(R.id.action_navigation_chats_to_chat_detail, args);
+        Intent intent = new Intent(requireContext(), CandidateChatActivity.class);
+        intent.putExtra("chatId", chat.getId());
+        startActivity(intent);
     }
 }

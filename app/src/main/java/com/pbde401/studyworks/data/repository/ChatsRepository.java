@@ -235,11 +235,15 @@ public class ChatsRepository {
         String id = document.getId();
         String chatId = document.getString("chatId");
         String senderId = document.getString("senderId");
-        UserRole senderRole = UserRole.valueOf(document.getString("senderRole"));
+        UserRole senderRole = UserRole.fromString(document.getString("senderRole"));
         String content = document.getString("content");
-        Date timestamp = document.getDate("timestamp");
-        Date createdAt = document.getDate("createdAt");
-        Date updatedAt = document.getDate("updatedAt");
+        String timestampString = document.getString("timestamp");
+        String createdAtString = document.getString("createdAt");
+        String updatedAtString = document.getString("updatedAt");
+
+        Date timestamp = parseDate(timestampString);
+        Date createdAt = parseDate(createdAtString);
+        Date updatedAt = parseDate(updatedAtString);
 
         return new Message(id, createdAt, updatedAt, chatId, senderId, senderRole, content, timestamp);
     }
