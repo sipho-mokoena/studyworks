@@ -94,7 +94,9 @@ public class AuthManager {
                                 firebaseUser.getUid(),
                                 fullName,
                                 email,
-                                role
+                                role,
+                                null,
+                                null
                         );
                         
                         userRepository.createUser(user)

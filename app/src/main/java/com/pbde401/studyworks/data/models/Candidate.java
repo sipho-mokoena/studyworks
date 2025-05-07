@@ -13,7 +13,7 @@ public class Candidate extends User {
     public Candidate(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
                     @NonNull String uid, @NonNull String fullName, @NonNull String email,
                     @Nullable CandidateProfile profile) {
-        super(id, createdAt, updatedAt, uid, fullName, email, UserRole.CANDIDATE);
+        super(id, createdAt, updatedAt, uid, fullName, email, UserRole.CANDIDATE, profile, null);
         this.profile = profile;
     }
 

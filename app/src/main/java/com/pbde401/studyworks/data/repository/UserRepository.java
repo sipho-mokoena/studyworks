@@ -4,6 +4,10 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.pbde401.studyworks.data.models.CandidateEducation;
+import com.pbde401.studyworks.data.models.CandidateExperience;
+import com.pbde401.studyworks.data.models.CandidateProfile;
+import com.pbde401.studyworks.data.models.EmployerProfile;
 import com.pbde401.studyworks.data.models.User;
 import com.pbde401.studyworks.data.models.Candidate;
 import com.pbde401.studyworks.data.models.Employer;
@@ -71,6 +75,7 @@ public class UserRepository {
         String uid = document.getString("uid");
         String fullName = document.getString("fullName");
         String email = document.getString("email");
+        Map<String, Object> profileMap = (Map<String, Object>) document.get("profile");
         String roleString = document.getString("role");
         UserRole role = roleString != null ? UserRole.fromString(roleString) : UserRole.GUEST;
 
@@ -80,10 +85,94 @@ public class UserRepository {
         Date updatedAt = parseDate(updatedAtString);
 
         if (role == UserRole.CANDIDATE) {
-            return new Candidate(id, createdAt, updatedAt, uid, fullName, email, null);
-        } else {
-            return new Employer(id, createdAt, updatedAt, uid, fullName, email, null);
+            CandidateProfile candidateProfile = null;
+            if (profileMap != null) {
+                List<CandidateEducation> education = parseEducation(profileMap);
+                List<CandidateExperience> experience = parseExperience(profileMap);
+                List<String> skills = profileMap.get("skills") instanceof List ? 
+                    (List<String>) profileMap.get("skills") : 
+                    new ArrayList<>();
+                String phone = (String) profileMap.get("phone");
+                String location = (String) profileMap.get("location");
+
+                candidateProfile = new CandidateProfile(
+                    phone != null ? phone : "",
+                    location != null ? location : "",
+                    education,
+                    experience,
+                    skills
+                );
+            }
+            return new Candidate(id, createdAt, updatedAt, uid, fullName, email, candidateProfile);
+        } else if (role == UserRole.EMPLOYER) {
+            EmployerProfile employerProfile = null;
+            if (profileMap != null) {
+                String companyName = (String) profileMap.get("companyName");
+                String companyDescription = (String) profileMap.get("companyDescription");
+                String website = (String) profileMap.get("website");
+
+                if (companyName != null) {
+                    employerProfile = new EmployerProfile(
+                        companyName,
+                        companyDescription,
+                        website
+                    );
+                }
+            }
+            return new Employer(id, createdAt, updatedAt, uid, fullName, email, employerProfile);
         }
+        
+        return new User(id, createdAt, updatedAt, uid, fullName, email, role, null, null);
+    }
+
+    private List<CandidateEducation> parseEducation(Map<String, Object> profileMap) {
+        List<CandidateEducation> educationList = new ArrayList<>();
+        if (profileMap.get("education") instanceof List) {
+            List<Map<String, Object>> educationData = (List<Map<String, Object>>) profileMap.get("education");
+            for (Map<String, Object> edu : educationData) {
+                String degree = (String) edu.get("degree");
+                String institution = (String) edu.get("institution");
+                String description = (String) edu.get("description");
+                Date startDate = parseDate((String) edu.get("startDate"));
+                Date endDate = parseDate((String) edu.get("endDate"));
+                
+                if (degree != null && institution != null && startDate != null) {
+                    educationList.add(new CandidateEducation(
+                        degree,
+                        institution,
+                        startDate,
+                        endDate,
+                        description
+                    ));
+                }
+            }
+        }
+        return educationList;
+    }
+
+    private List<CandidateExperience> parseExperience(Map<String, Object> profileMap) {
+        List<CandidateExperience> experienceList = new ArrayList<>();
+        if (profileMap.get("experience") instanceof List) {
+            List<Map<String, Object>> experienceData = (List<Map<String, Object>>) profileMap.get("experience");
+            for (Map<String, Object> exp : experienceData) {
+                String title = (String) exp.get("title");
+                String company = (String) exp.get("company");
+                String description = (String) exp.get("description");
+                Date startDate = parseDate((String) exp.get("startDate"));
+                Date endDate = parseDate((String) exp.get("endDate"));
+                
+                if (title != null && company != null && startDate != null) {
+                    experienceList.add(new CandidateExperience(
+                        title,
+                        company,
+                        startDate,
+                        endDate,
+                        description
+                    ));
+                }
+            }
+        }
+        return experienceList;
     }
 
     private Date parseDate(String dateString) {
