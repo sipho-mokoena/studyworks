@@ -37,24 +37,26 @@ public class CandidateProfileViewModel extends ViewModel {
 
     public void loadProfile(String userId) {
         isLoading.setValue(true);
+        error.setValue(null);
         
-        // First try to get the user data
         userRepository.getUserById(userId)
             .addOnSuccessListener(user -> {
                 if (user instanceof Candidate) {
                     candidateData.setValue((Candidate) user);
+                    
+                    profileRepository.getCandidateProfile(userId)
+                        .addOnSuccessListener(profile -> {
+                            profileData.setValue(profile);
+                            isLoading.setValue(false);
+                        })
+                        .addOnFailureListener(e -> {
+                            error.setValue("Failed to load profile details: " + e.getMessage());
+                            isLoading.setValue(false);
+                        });
+                } else {
+                    error.setValue("Invalid user type");
+                    isLoading.setValue(false);
                 }
-                
-                // Then get the detailed profile data
-                profileRepository.getCandidateProfile(userId)
-                    .addOnSuccessListener(profile -> {
-                        profileData.setValue(profile);
-                        isLoading.setValue(false);
-                    })
-                    .addOnFailureListener(e -> {
-                        error.setValue("Failed to load profile details: " + e.getMessage());
-                        isLoading.setValue(false);
-                    });
             })
             .addOnFailureListener(e -> {
                 error.setValue("Failed to load user data: " + e.getMessage());
@@ -68,10 +70,16 @@ public class CandidateProfileViewModel extends ViewModel {
     }
 
     public void saveProfile(CandidateProfile updatedProfile) {
+        if (candidateData.getValue() == null) {
+            error.setValue("No user data available");
+            return;
+        }
+
         isLoading.setValue(true);
         error.setValue(null);
         
-        userRepository.getUserById(FirebaseAuth.getInstance().getCurrentUser().getUid())
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        userRepository.getUserById(userId)
             .addOnSuccessListener(user -> {
                 if (user instanceof Candidate) {
                     Candidate candidate = (Candidate) user;
@@ -79,6 +87,7 @@ public class CandidateProfileViewModel extends ViewModel {
                     
                     userRepository.setCandidateProfile(candidate)
                         .addOnSuccessListener(updatedCandidate -> {
+                            candidateData.setValue(updatedCandidate);
                             profileData.setValue(updatedProfile);
                             isLoading.setValue(false);
                         })
@@ -86,6 +95,9 @@ public class CandidateProfileViewModel extends ViewModel {
                             error.setValue("Failed to save profile: " + e.getMessage());
                             isLoading.setValue(false);
                         });
+                } else {
+                    error.setValue("Invalid user type");
+                    isLoading.setValue(false);
                 }
             })
             .addOnFailureListener(e -> {

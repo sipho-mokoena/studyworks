@@ -16,6 +16,7 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.pbde401.studyworks.R;
+import com.pbde401.studyworks.data.models.Candidate;
 import com.pbde401.studyworks.data.models.CandidateEducation;
 import com.pbde401.studyworks.data.models.CandidateExperience;
 import com.pbde401.studyworks.data.models.CandidateProfile;
@@ -85,7 +86,9 @@ public class CandidateProfileFragment extends Fragment {
     }
 
     private void setupObservers() {
-        viewModel.getProfileData().observe(getViewLifecycleOwner(), this::updateUI);
+        viewModel.getProfileData().observe(getViewLifecycleOwner(), profile -> {
+            if (profile != null) this.updateUI(profile);
+        });
         viewModel.getCandidateData().observe(getViewLifecycleOwner(), candidate -> {
             if (candidate != null) {
                 fullNameInput.setText(candidate.getFullName());
@@ -213,11 +216,10 @@ public class CandidateProfileFragment extends Fragment {
     private void showDatePicker(TextInputEditText dateInput) {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(requireContext(),
-            (view, year, month, day) -> {
-                calendar.set(Calendar.YEAR, year);
-                calendar.set(Calendar.MONTH, month);
-                calendar.set(Calendar.DAY_OF_MONTH, day);
-                dateInput.setText(formatDate(calendar.getTime()));
+            (view, year, month, dayOfMonth) -> {
+                Calendar selectedDate = Calendar.getInstance();
+                selectedDate.set(year, month, dayOfMonth);
+                dateInput.setText(formatDate(selectedDate.getTime()));
             },
             calendar.get(Calendar.YEAR),
             calendar.get(Calendar.MONTH),
@@ -250,43 +252,41 @@ public class CandidateProfileFragment extends Fragment {
         // Collect education
         List<CandidateEducation> educationList = new ArrayList<>();
         for (int i = 0; i < educationContainer.getChildCount(); i++) {
-            View view = educationContainer.getChildAt(i);
-            String degree = ((TextInputEditText) view.findViewById(R.id.degree_input)).getText().toString();
-            String institution = ((TextInputEditText) view.findViewById(R.id.institution_input)).getText().toString();
-            String startDateStr = ((TextInputEditText) view.findViewById(R.id.start_date_input)).getText().toString();
-            String endDateStr = ((TextInputEditText) view.findViewById(R.id.end_date_input)).getText().toString();
-            String description = ((TextInputEditText) view.findViewById(R.id.description_input)).getText().toString();
+            View educationView = educationContainer.getChildAt(i);
+            TextInputEditText degreeInput = educationView.findViewById(R.id.degree_input);
+            TextInputEditText institutionInput = educationView.findViewById(R.id.institution_input);
+            TextInputEditText startDateInput = educationView.findViewById(R.id.start_date_input);
+            TextInputEditText endDateInput = educationView.findViewById(R.id.end_date_input);
+            TextInputEditText descriptionInput = educationView.findViewById(R.id.description_input);
 
-            if (!degree.isEmpty() && !institution.isEmpty() && !startDateStr.isEmpty()) {
-                educationList.add(new CandidateEducation(
-                    degree,
-                    institution,
-                    parseDate(startDateStr),
-                    parseDate(endDateStr),
-                    description
-                ));
-            }
+            CandidateEducation education = new CandidateEducation(
+                degreeInput.getText().toString(),
+                institutionInput.getText().toString(),
+                parseDate(startDateInput.getText().toString()),
+                parseDate(endDateInput.getText().toString()),
+                descriptionInput.getText().toString()
+            );
+            educationList.add(education);
         }
 
         // Collect experience
         List<CandidateExperience> experienceList = new ArrayList<>();
         for (int i = 0; i < experienceContainer.getChildCount(); i++) {
-            View view = experienceContainer.getChildAt(i);
-            String title = ((TextInputEditText) view.findViewById(R.id.title_input)).getText().toString();
-            String company = ((TextInputEditText) view.findViewById(R.id.company_input)).getText().toString();
-            String startDateStr = ((TextInputEditText) view.findViewById(R.id.start_date_input)).getText().toString();
-            String endDateStr = ((TextInputEditText) view.findViewById(R.id.end_date_input)).getText().toString();
-            String description = ((TextInputEditText) view.findViewById(R.id.description_input)).getText().toString();
+            View experienceView = experienceContainer.getChildAt(i);
+            TextInputEditText titleInput = experienceView.findViewById(R.id.title_input);
+            TextInputEditText companyInput = experienceView.findViewById(R.id.company_input);
+            TextInputEditText startDateInput = experienceView.findViewById(R.id.start_date_input);
+            TextInputEditText endDateInput = experienceView.findViewById(R.id.end_date_input);
+            TextInputEditText descriptionInput = experienceView.findViewById(R.id.description_input);
 
-            if (!title.isEmpty() && !company.isEmpty() && !startDateStr.isEmpty()) {
-                experienceList.add(new CandidateExperience(
-                    title,
-                    company,
-                    parseDate(startDateStr),
-                    parseDate(endDateStr),
-                    description
-                ));
-            }
+            CandidateExperience experience = new CandidateExperience(
+                titleInput.getText().toString(),
+                companyInput.getText().toString(),
+                parseDate(startDateInput.getText().toString()),
+                parseDate(endDateInput.getText().toString()),
+                descriptionInput.getText().toString()
+            );
+            experienceList.add(experience);
         }
 
         // Create updated profile
@@ -298,7 +298,6 @@ public class CandidateProfileFragment extends Fragment {
             skills
         );
 
-        // Save profile
         viewModel.saveProfile(updatedProfile);
     }
 }
