@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:background="#FFEBEE"
             android:padding="16dp"
-            android:textColor="#B71C1C"
+            android:textColor="@color/red_500"
             android:visibility="gone"
             tools:visibility="visible"
             tools:text="Error message"/>
