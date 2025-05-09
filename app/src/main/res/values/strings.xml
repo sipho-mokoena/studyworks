@@ -15,4 +15,18 @@
     <string name="menu_applications">Applications</string>
     <string name="menu_chats">Chats</string>
     <string name="menu_profile">Profile</string>
+
+    <string-array name="work_mode_options">
+        <item>All</item>
+        <item>Remote</item>
+        <item>On-site</item>
+        <item>Hybrid</item>
+    </string-array>
+
+    <string-array name="job_type_options">
+        <item>All</item>
+        <item>Full-time</item>
+        <item>Part-time</item>
+        <item>Contract</item>
+    </string-array>
 </resources>

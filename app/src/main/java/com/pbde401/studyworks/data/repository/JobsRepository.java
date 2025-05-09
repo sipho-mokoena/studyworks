@@ -194,6 +194,32 @@ public class JobsRepository {
         return jobsLiveData;
     }
 
+    public LiveData<List<Job>> getFilteredJobs(String workMode, String jobType) {
+        MutableLiveData<List<Job>> jobsLiveData = new MutableLiveData<>();
+
+        Query query = db.collection(JOBS_COLLECTION).whereEqualTo("active", true);
+
+        if (!workMode.equals("All")) {
+            query = query.whereEqualTo("workMode", workMode);
+        }
+
+        if (!jobType.equals("All")) {
+            query = query.whereEqualTo("type", jobType);
+        }
+
+        query.get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                List<Job> jobs = new ArrayList<>();
+                for (DocumentSnapshot document : queryDocumentSnapshots) {
+                    jobs.add(documentToJob(document));
+                }
+                jobsLiveData.setValue(jobs);
+            })
+            .addOnFailureListener(e -> jobsLiveData.setValue(new ArrayList<>()));
+
+        return jobsLiveData;
+    }
+
     @NonNull
     private Job documentToJob(DocumentSnapshot document) {
         String id = document.getId();

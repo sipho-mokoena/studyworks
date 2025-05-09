@@ -14,7 +14,7 @@ import java.util.List;
 
 public class JobListingAdapter extends RecyclerView.Adapter<JobListingAdapter.JobViewHolder> {
     private List<Job> jobs = new ArrayList<>();
-    private OnJobClickListener listener;
+    private final OnJobClickListener listener;
 
     public interface OnJobClickListener {
         void onJobClick(Job job);
@@ -44,14 +44,13 @@ public class JobListingAdapter extends RecyclerView.Adapter<JobListingAdapter.Jo
     }
 
     public void setJobs(List<Job> jobs) {
-        this.jobs = jobs;
+        this.jobs = jobs != null ? jobs : new ArrayList<>();
         notifyDataSetChanged();
     }
 
     static class JobViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvJobTitle;
         private final TextView tvCompanyName;
-        private final TextView tvLocation;
         private final TextView tvJobDescription;
         private final TextView tvSalaryRange;
         private final Chip chipFullTime;
@@ -62,7 +61,6 @@ public class JobListingAdapter extends RecyclerView.Adapter<JobListingAdapter.Jo
             super(itemView);
             tvJobTitle = itemView.findViewById(R.id.tvJobTitle);
             tvCompanyName = itemView.findViewById(R.id.tvCompanyName);
-            tvLocation = itemView.findViewById(R.id.tvLocation);
             tvJobDescription = itemView.findViewById(R.id.tvJobDescription);
             tvSalaryRange = itemView.findViewById(R.id.tvSalaryRange);
             chipFullTime = itemView.findViewById(R.id.chipFullTime);
@@ -72,8 +70,7 @@ public class JobListingAdapter extends RecyclerView.Adapter<JobListingAdapter.Jo
 
         public void bind(Job job, OnJobClickListener listener) {
             tvJobTitle.setText(job.getTitle());
-            tvCompanyName.setText(job.getCompanyName());
-            tvLocation.setText(job.getLocation());
+            tvCompanyName.setText(String.format("%s • %s", job.getCompanyName(), job.getLocation()));
             tvJobDescription.setText(job.getDescription());
             tvSalaryRange.setText(job.getSalary());
             
