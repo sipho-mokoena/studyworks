@@ -15,13 +15,60 @@
         android:id="@+id/navigation_candidate_jobs"
         android:name="com.pbde401.studyworks.ui.candidate.jobs.CandidateJobsFragment"
         android:label="Jobs"
-        tools:layout="@layout/fragment_candidate_jobs" />
+        tools:layout="@layout/fragment_candidate_jobs">
+        <!-- Navigate to single job detail -->
+        <action
+            android:id="@+id/action_navigation_candidate_jobs_to_navigation_candidate_single_job"
+            app:destination="@id/navigation_candidate_single_job" />
+    </fragment>
+
+    <!-- Single Job Detail -->
+    <fragment
+        android:id="@+id/navigation_candidate_single_job"
+        android:name="com.pbde401.studyworks.ui.candidate.jobs.CandidateSingleJobFragment"
+        android:label="Job Details"
+        tools:layout="@layout/fragment_candidate_single_job">
+        <argument
+            android:name="jobId"
+            app:argType="string" />
+        <!-- Navigate to job application -->
+        <action
+            android:id="@+id/action_navigation_candidate_single_job_to_navigation_candidate_job_application"
+            app:destination="@id/navigation_candidate_job_application" />
+    </fragment>
+
+    <!-- Job Application Detail -->
+    <fragment
+        android:id="@+id/navigation_candidate_job_application"
+        android:name="com.pbde401.studyworks.ui.candidate.jobs.CandidateJobApplicationFragment"
+        android:label="Job Application"
+        tools:layout="@layout/fragment_candidate_job_application">
+        <argument
+            android:name="jobId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_candidate_applications"
         android:name="com.pbde401.studyworks.ui.candidate.applications.CandidateApplicationsFragment"
         android:label="Applications"
-        tools:layout="@layout/fragment_candidate_applications" />
+        tools:layout="@layout/fragment_candidate_applications">
+        <!-- Navigate to single application detail -->
+        <action
+            android:id="@+id/action_navigation_candidate_applications_to_navigation_candidate_single_application"
+            app:destination="@id/navigation_candidate_single_application" />
+    </fragment>
+
+    <!-- Single Application Detail -->
+    <fragment
+        android:id="@+id/navigation_candidate_single_application"
+        android:name="com.pbde401.studyworks.ui.candidate.applications.CandidateSingleApplicationFragment"
+        android:label="Application Details"
+        tools:layout="@layout/fragment_candidate_single_application">
+        <argument
+            android:name="applicationId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_candidate_chats"
