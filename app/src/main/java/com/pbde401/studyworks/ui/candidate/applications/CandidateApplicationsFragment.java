@@ -10,14 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 import com.pbde401.studyworks.R;
-import com.pbde401.studyworks.data.models.Application;
-import com.pbde401.studyworks.ui.candidate.applications.CandidateApplicationsViewModel;
-import com.pbde401.studyworks.ui.candidate.applications.JobApplicationAdapter;
 
 
 public class CandidateApplicationsFragment extends Fragment {
     private CandidateApplicationsViewModel viewModel;
-    private JobApplicationAdapter adapter;
+    private ApplicationAdapter adapter;
     private RecyclerView recyclerView;
 
     public CandidateApplicationsFragment() {
@@ -42,7 +39,7 @@ public class CandidateApplicationsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_candidate_applications, container, false);
         
         recyclerView = view.findViewById(R.id.rvJobApplications);
-        adapter = new JobApplicationAdapter(this);
+        adapter = new ApplicationAdapter(this);
         recyclerView.setAdapter(adapter);
 
         // Observe applications data

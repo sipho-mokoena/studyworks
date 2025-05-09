@@ -1,20 +1,22 @@
 package com.pbde401.studyworks.ui.candidate.applications;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 import com.pbde401.studyworks.R;
 import com.pbde401.studyworks.data.models.Application;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JobApplicationAdapter extends RecyclerView.Adapter<JobApplicationAdapter.ApplicationViewHolder> {
+public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.ApplicationViewHolder> {
     private List<Application> applications = new ArrayList<>();
     private final CandidateApplicationsFragment fragment;
 
-    public JobApplicationAdapter(CandidateApplicationsFragment fragment) {
+    public ApplicationAdapter(CandidateApplicationsFragment fragment) {
         this.fragment = fragment;
     }
 
@@ -59,7 +61,10 @@ public class JobApplicationAdapter extends RecyclerView.Adapter<JobApplicationAd
             dateView.setText(application.getAppliedAt().toString());
             
             itemView.setOnClickListener(v -> {
-                // Handle click event if needed
+                Bundle bundle = new Bundle();
+                bundle.putString("applicationId", application.getId());
+                Navigation.findNavController(v)
+                    .navigate(R.id.action_navigation_candidate_applications_to_navigation_candidate_single_application, bundle);
             });
         }
     }

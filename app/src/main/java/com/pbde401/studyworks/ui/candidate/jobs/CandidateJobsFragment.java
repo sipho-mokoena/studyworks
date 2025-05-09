@@ -48,7 +48,7 @@ public class CandidateJobsFragment extends Fragment implements JobListingAdapter
         // Navigate to job details
         Bundle bundle = new Bundle();
         bundle.putString("jobId", job.getId());
-//        Navigation.findNavController(requireView())
-//                .navigate(R.id.action_candidateJobsFragment_to_jobDetailsFragment, bundle);
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_navigation_candidate_jobs_to_navigation_candidate_single_job, bundle);
     }
 }
