@@ -30,7 +30,6 @@ public class CandidateSingleJobFragment extends Fragment {
     private View contentContainer;
     private TextView errorText;
     private TextView tvJobTitle;
-    private ShapeableImageView companyAvatar;
     private TextView tvCompanyName;
     private TextView tvLocation;
     private TextView tvJobType;
@@ -73,7 +72,6 @@ public class CandidateSingleJobFragment extends Fragment {
         contentContainer = view.findViewById(R.id.contentContainer);
         errorText = view.findViewById(R.id.errorText);
         tvJobTitle = view.findViewById(R.id.tvJobTitle);
-        companyAvatar = view.findViewById(R.id.companyAvatar);
         tvCompanyName = view.findViewById(R.id.tvCompanyName);
         tvLocation = view.findViewById(R.id.tvLocation);
         tvJobType = view.findViewById(R.id.tvJobType);

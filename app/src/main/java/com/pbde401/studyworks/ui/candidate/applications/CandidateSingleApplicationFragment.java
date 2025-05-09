@@ -121,7 +121,7 @@ public class CandidateSingleApplicationFragment extends Fragment {
                         Bundle b = new Bundle();
                         b.putString("jobId", app.getJobId());
                         Navigation.findNavController(v)
-                            .navigate(R.id.action_navigation_candidate_single_application_to_navigation_candidate_single_job, b);
+                            .navigate(R.id.action_navigation_candidate_single_application_to_navigation_candidate_job_application, b);
                     });
                     // setup message
                     new ChatsRepository().getChatByEmployerIdAndCandidateId(app.getEmployerId(), app.getCandidateId())
