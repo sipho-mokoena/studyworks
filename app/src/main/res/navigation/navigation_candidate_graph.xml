@@ -68,6 +68,9 @@
         <argument
             android:name="applicationId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_navigation_candidate_single_application_to_navigation_candidate_single_job"
+            app:destination="@id/navigation_candidate_single_job" />
     </fragment>
 
     <fragment
