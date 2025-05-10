@@ -80,8 +80,8 @@ public class CandidateProfileFragment extends Fragment {
 
     private void setupListeners() {
         addSkillButton.setOnClickListener(v -> showAddSkillDialog());
-        addEducationButton.setOnClickListener(v -> addEducationItem(null));
-        addExperienceButton.setOnClickListener(v -> addExperienceItem(null));
+        addEducationButton.setOnClickListener(v -> showAddEducationDialog(null));
+        addExperienceButton.setOnClickListener(v -> showAddExperienceDialog(null));
         saveButton.setOnClickListener(v -> saveProfile());
     }
 
@@ -138,6 +138,14 @@ public class CandidateProfileFragment extends Fragment {
         }
     }
 
+    private void addSkillChip(String skill) {
+        Chip chip = new Chip(requireContext());
+        chip.setText(skill);
+        chip.setCloseIconVisible(true);
+        chip.setOnCloseIconClickListener(v -> skillsChipGroup.removeView(chip));
+        skillsChipGroup.addView(chip);
+    }
+
     private void showAddSkillDialog() {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_add_skill, null);
         EditText skillInput = dialogView.findViewById(R.id.skill_input);
@@ -155,17 +163,9 @@ public class CandidateProfileFragment extends Fragment {
             .show();
     }
 
-    private void addSkillChip(String skill) {
-        Chip chip = new Chip(requireContext());
-        chip.setText(skill);
-        chip.setCloseIconVisible(true);
-        chip.setOnCloseIconClickListener(v -> skillsChipGroup.removeView(chip));
-        skillsChipGroup.addView(chip);
-    }
-
     private void addEducationItem(CandidateEducation education) {
         View educationView = getLayoutInflater().inflate(R.layout.item_education, educationContainer, false);
-        
+
         TextInputEditText degreeInput = educationView.findViewById(R.id.degree_input);
         TextInputEditText institutionInput = educationView.findViewById(R.id.institution_input);
         TextInputEditText startDateInput = educationView.findViewById(R.id.start_date_input);
@@ -188,9 +188,42 @@ public class CandidateProfileFragment extends Fragment {
         educationContainer.addView(educationView);
     }
 
+    private void showAddEducationDialog(CandidateEducation existing) {
+        View dlg = getLayoutInflater().inflate(R.layout.dialog_add_education, null);
+        TextInputEditText deg = dlg.findViewById(R.id.degree_input);
+        TextInputEditText inst = dlg.findViewById(R.id.institution_input);
+        TextInputEditText sd = dlg.findViewById(R.id.start_date_input);
+        TextInputEditText ed = dlg.findViewById(R.id.end_date_input);
+        TextInputEditText desc = dlg.findViewById(R.id.description_input);
+        if (existing != null) {
+            deg.setText(existing.getDegree());
+            inst.setText(existing.getInstitution());
+            sd.setText(formatDate(existing.getStartDate()));
+            ed.setText(formatDate(existing.getEndDate()));
+            desc.setText(existing.getDescription());
+        }
+        sd.setOnClickListener(v -> showDatePicker(sd));
+        ed.setOnClickListener(v -> showDatePicker(ed));
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Add Education")
+                .setView(dlg)
+                .setPositiveButton("Add", (d, w) -> {
+                    CandidateEducation ce = new CandidateEducation(
+                            deg.getText().toString(),
+                            inst.getText().toString(),
+                            parseDate(sd.getText().toString()),
+                            parseDate(ed.getText().toString()),
+                            desc.getText().toString()
+                    );
+                    addEducationItem(ce);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
     private void addExperienceItem(CandidateExperience experience) {
         View experienceView = getLayoutInflater().inflate(R.layout.item_experience, experienceContainer, false);
-        
+
         TextInputEditText titleInput = experienceView.findViewById(R.id.title_input);
         TextInputEditText companyInput = experienceView.findViewById(R.id.company_input);
         TextInputEditText startDateInput = experienceView.findViewById(R.id.start_date_input);
@@ -211,6 +244,39 @@ public class CandidateProfileFragment extends Fragment {
         removeButton.setOnClickListener(v -> experienceContainer.removeView(experienceView));
 
         experienceContainer.addView(experienceView);
+    }
+
+    private void showAddExperienceDialog(CandidateExperience existing) {
+        View dlg = getLayoutInflater().inflate(R.layout.dialog_add_experience, null);
+        TextInputEditText title = dlg.findViewById(R.id.title_input);
+        TextInputEditText comp = dlg.findViewById(R.id.company_input);
+        TextInputEditText sd = dlg.findViewById(R.id.start_date_input);
+        TextInputEditText ed = dlg.findViewById(R.id.end_date_input);
+        TextInputEditText desc = dlg.findViewById(R.id.description_input);
+        if (existing != null) {
+            title.setText(existing.getTitle());
+            comp.setText(existing.getCompany());
+            sd.setText(formatDate(existing.getStartDate()));
+            ed.setText(formatDate(existing.getEndDate()));
+            desc.setText(existing.getDescription());
+        }
+        sd.setOnClickListener(v -> showDatePicker(sd));
+        ed.setOnClickListener(v -> showDatePicker(ed));
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Add Experience")
+                .setView(dlg)
+                .setPositiveButton("Add", (d, w) -> {
+                    CandidateExperience ce = new CandidateExperience(
+                            title.getText().toString(),
+                            comp.getText().toString(),
+                            parseDate(sd.getText().toString()),
+                            parseDate(ed.getText().toString()),
+                            desc.getText().toString()
+                    );
+                    addExperienceItem(ce);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     private void showDatePicker(TextInputEditText dateInput) {
