@@ -129,14 +129,14 @@ public class CandidateSingleJobFragment extends Fragment {
         setupCompanyAvatar(job.getCompanyName());
         tvCompanyName.setText(job.getCompanyName());
         tvLocation.setText(job.getLocation());
-        tvJobType.setText(job.getType().toString());
+        tvJobType.setText(job.getType().getValue());
         tvPostedDate.setText(String.format("Posted %s", formatDate(job.getCreatedAt())));
         tvSalary.setText(job.getSalary());
         tvDescription.setText(job.getDescription());
 
         // Setup chips
         chipGroup.removeAllViews();
-        addChip(job.getType().toString());
+        addChip(job.getType().getValue());
         addChip(job.getLevel());
 
         // Setup lists
