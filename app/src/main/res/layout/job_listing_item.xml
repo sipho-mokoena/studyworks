@@ -57,6 +57,7 @@
                 android:id="@+id/cvJobType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checkable="false"
                 android:text="Full-time"
                 style="@style/Widget.MaterialComponents.Chip.Choice" />
 
@@ -64,6 +65,7 @@
                 android:id="@+id/cvWorkMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checkable="false"
                 android:text="On-site"
                 style="@style/Widget.MaterialComponents.Chip.Choice" />
 
@@ -71,6 +73,7 @@
                 android:id="@+id/cvLevel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:checkable="false"
                 android:text="Senior Level"
                 style="@style/Widget.MaterialComponents.Chip.Choice" />
         </com.google.android.material.chip.ChipGroup>
