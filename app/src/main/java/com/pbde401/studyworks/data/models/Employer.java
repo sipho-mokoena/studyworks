@@ -22,7 +22,7 @@ public class Employer extends User {
         return profile;
     }
 
-    public void setProfile(@Nullable Map<String, Object> profile) {
+    public void setProfile(@Nullable EmployerProfile profile) {
         this.profile = (EmployerProfile) profile;
     }
 }
