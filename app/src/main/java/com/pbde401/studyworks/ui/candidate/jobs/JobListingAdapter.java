@@ -51,32 +51,34 @@ public class JobListingAdapter extends RecyclerView.Adapter<JobListingAdapter.Jo
     static class JobViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvJobTitle;
         private final TextView tvCompanyName;
+        private final TextView tvLocation;
         private final TextView tvJobDescription;
         private final TextView tvSalaryRange;
-        private final Chip chipFullTime;
-        private final Chip chipOnSite;
-        private final Chip chipLevel;
+        private final Chip cvJobType;
+        private final Chip cvWorkMode;
+        private final Chip cvLevel;
 
         public JobViewHolder(@NonNull View itemView) {
             super(itemView);
             tvJobTitle = itemView.findViewById(R.id.tvJobTitle);
             tvCompanyName = itemView.findViewById(R.id.tvCompanyName);
+            tvLocation = itemView.findViewById(R.id.tvLocation);
+            cvJobType = itemView.findViewById(R.id.cvJobType);
+            cvWorkMode = itemView.findViewById(R.id.cvWorkMode);
+            cvLevel = itemView.findViewById(R.id.cvLevel);
             tvJobDescription = itemView.findViewById(R.id.tvJobDescription);
             tvSalaryRange = itemView.findViewById(R.id.tvSalaryRange);
-            chipFullTime = itemView.findViewById(R.id.chipFullTime);
-            chipOnSite = itemView.findViewById(R.id.chipOnSite);
-            chipLevel = itemView.findViewById(R.id.chipLevel);
         }
 
         public void bind(Job job, OnJobClickListener listener) {
             tvJobTitle.setText(job.getTitle());
-            tvCompanyName.setText(String.format("%s • %s", job.getCompanyName(), job.getLocation()));
+            tvCompanyName.setText(job.getCompanyName());
+            tvLocation.setText(job.getLocation());
+            cvJobType.setText(job.getType().getValue());
+            cvWorkMode.setText(job.getWorkMode().getValue());
+            cvLevel.setText(job.getLevel());
             tvJobDescription.setText(job.getDescription());
             tvSalaryRange.setText(job.getSalary());
-            
-            chipFullTime.setText(job.getType().getValue());
-            chipOnSite.setText(job.getWorkMode().getValue());
-            chipLevel.setText(job.getLevel());
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) {

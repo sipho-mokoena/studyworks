@@ -49,9 +49,8 @@ public class CandidateJobApplicationViewModel extends ViewModel {
         public String candidateId;
     }
 
-    public void init(String jobId, String userId) {
+    public void init(String jobId) {
         this.jobId = jobId;
-        this.userId = userId;
         loadJob();
         loadApplication();
     }

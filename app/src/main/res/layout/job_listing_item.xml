@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="240dp"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
@@ -54,21 +54,21 @@
             android:layout_marginTop="8dp">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chipFullTime"
+                android:id="@+id/cvJobType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Full-time"
                 style="@style/Widget.MaterialComponents.Chip.Choice" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chipOnSite"
+                android:id="@+id/cvWorkMode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="On-site"
                 style="@style/Widget.MaterialComponents.Chip.Choice" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chipLevel"
+                android:id="@+id/cvLevel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Senior Level"

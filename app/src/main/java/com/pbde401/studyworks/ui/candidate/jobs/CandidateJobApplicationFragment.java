@@ -20,9 +20,9 @@ import com.pbde401.studyworks.R;
 
 public class CandidateJobApplicationFragment extends Fragment {
     private CandidateJobApplicationViewModel viewModel;
+    private String jobId;
     
     // UI components
-    private ImageButton backButton;
     private TextView errorText;
     private TextView jobTitle;
     private TextView companyName;
@@ -50,9 +50,10 @@ public class CandidateJobApplicationFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        jobId = getArguments() != null ? getArguments().getString("jobId") : null;
         
         // Initialize UI components
-        backButton = view.findViewById(R.id.backButton);
         errorText = view.findViewById(R.id.errorText);
         jobTitle = view.findViewById(R.id.jobTitle);
         companyName = view.findViewById(R.id.companyName);
@@ -69,11 +70,7 @@ public class CandidateJobApplicationFragment extends Fragment {
 
         // Initialize ViewModel
         viewModel = new ViewModelProvider(this).get(CandidateJobApplicationViewModel.class);
-        
-        // TODO: Get jobId and userId from arguments or shared preferences
-        String jobId = "sample_job_id";  // Replace with actual jobId
-        String userId = "sample_user_id"; // Replace with actual userId
-        viewModel.init(jobId, userId);
+        viewModel.init(jobId);
 
         setupObservers();
         setupListeners();
@@ -121,11 +118,6 @@ public class CandidateJobApplicationFragment extends Fragment {
     }
 
     private void setupListeners() {
-        backButton.setOnClickListener(v -> {
-            // TODO: Navigate back
-            requireActivity().onBackPressed();
-        });
-
         messageRecruiterButton.setOnClickListener(v -> {
             // TODO: Navigate to chat
         });
