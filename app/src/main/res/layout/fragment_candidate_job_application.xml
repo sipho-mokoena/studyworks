@@ -12,37 +12,11 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="16dp">
-
-            <ImageButton
-                android:id="@+id/backButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_arrow_back"
-                android:contentDescription="Back"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Submit Application"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:layout_marginStart="16dp"/>
-        </LinearLayout>
-
         <!-- Error message -->
         <TextView
             android:id="@+id/errorText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFEBEE"
             android:padding="16dp"
             android:textColor="@color/red_500"
             android:visibility="gone"
@@ -50,7 +24,7 @@
             tools:text="Error message"/>
 
         <!-- Job Details Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp">
@@ -89,12 +63,6 @@
                     android:orientation="horizontal"
                     android:layout_marginTop="8dp">
 
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_work"
-                        android:layout_marginEnd="8dp"/>
-
                     <TextView
                         android:id="@+id/jobType"
                         android:layout_width="wrap_content"
@@ -122,10 +90,10 @@
                     android:visibility="gone"
                     tools:visibility="visible" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Application Form Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -221,7 +189,7 @@
                         android:text="Submit Application"/>
                 </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Loading Progress -->
         <ProgressBar

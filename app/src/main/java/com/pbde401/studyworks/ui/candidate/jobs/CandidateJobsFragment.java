@@ -72,7 +72,9 @@ public class CandidateJobsFragment extends Fragment implements JobListingAdapter
         btnClearFilters.setOnClickListener(v -> clearFilters());
 
         // Observe jobs data
-        viewModel.getActiveJobs().observe(getViewLifecycleOwner(), this::updateJobsUI);
+        viewModel.getActiveJobs().observe(getViewLifecycleOwner(), jobs -> {
+            updateJobsUI(jobs);
+        });
 
         // Observe loading state
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
