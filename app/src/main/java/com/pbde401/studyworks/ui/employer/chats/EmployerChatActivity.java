@@ -1,16 +1,19 @@
 package com.pbde401.studyworks.ui.employer.chats;
 
 import android.os.Bundle;
+
+import com.google.android.material.button.MaterialButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.text.TextUtils;
 import android.widget.EditText;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
 import com.pbde401.studyworks.R;
 
 public class EmployerChatActivity extends AppCompatActivity {
@@ -22,7 +25,7 @@ public class EmployerChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_candidate_chat);
+        setContentView(R.layout.activity_employer_chat_main);
 
         // Setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
