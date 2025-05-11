@@ -81,6 +81,22 @@ public class UserRepository {
                 .document(user.getId())
                 .set(userData);
     }
+
+    public Task<List<User>> getUsersByIds(List<String> userIds) {
+        return db.collection(USERS_COLLECTION)
+                .whereIn("id", userIds)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        List<User> users = new ArrayList<>();
+                        for (DocumentSnapshot document : task.getResult().getDocuments()) {
+                            users.add(documentToUser(document));
+                        }
+                        return users;
+                    }
+                    return new ArrayList<>();
+                });
+    }
     
     @NonNull
     private User documentToUser(DocumentSnapshot document) {
