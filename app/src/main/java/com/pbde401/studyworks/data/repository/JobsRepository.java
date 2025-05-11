@@ -197,13 +197,41 @@ public class JobsRepository {
     public LiveData<List<Job>> getFilteredJobs(String workMode, String jobType) {
         MutableLiveData<List<Job>> jobsLiveData = new MutableLiveData<>();
 
-        Query query = db.collection(JOBS_COLLECTION).whereEqualTo("active", true);
+        Query query = db.collection(JOBS_COLLECTION)
+            .whereEqualTo("active", true);
 
-        if (!workMode.equals("All")) {
+        if (!workMode.isEmpty()) {
             query = query.whereEqualTo("workMode", workMode);
         }
 
-        if (!jobType.equals("All")) {
+        if (!jobType.isEmpty()) {
+            query = query.whereEqualTo("type", jobType);
+        }
+
+        query.get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                List<Job> jobs = new ArrayList<>();
+                for (DocumentSnapshot document : queryDocumentSnapshots) {
+                    jobs.add(documentToJob(document));
+                }
+                jobsLiveData.setValue(jobs);
+            })
+            .addOnFailureListener(e -> jobsLiveData.setValue(new ArrayList<>()));
+
+        return jobsLiveData;
+    }
+
+    public LiveData<List<Job>> getFilteredEmployerJobs(String employerId, String workMode, String jobType) {
+        MutableLiveData<List<Job>> jobsLiveData = new MutableLiveData<>();
+
+        Query query = db.collection(JOBS_COLLECTION)
+            .whereEqualTo("companyId", employerId);
+
+        if (!workMode.isEmpty()) {
+            query = query.whereEqualTo("workMode", workMode);
+        }
+
+        if (!jobType.isEmpty()) {
             query = query.whereEqualTo("type", jobType);
         }
 
