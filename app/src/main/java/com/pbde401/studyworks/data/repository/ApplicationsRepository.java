@@ -7,6 +7,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.pbde401.studyworks.data.models.Application;
 import com.pbde401.studyworks.data.models.ApplicationInterview;
+import com.pbde401.studyworks.data.models.Candidate;
+import com.pbde401.studyworks.data.models.User;
 import com.pbde401.studyworks.data.models.enums.ApplicationStatus;
 import com.pbde401.studyworks.util.AuthManager;
 import java.text.ParseException;
@@ -21,7 +23,6 @@ public class ApplicationsRepository {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final String APPLICATIONS_COLLECTION = "applications";
     private final AuthManager authManager = AuthManager.getInstance();
-
     public LiveData<List<Application>> getCandidateApplications() {
         MutableLiveData<List<Application>> applicationsLiveData = new MutableLiveData<>();
 
@@ -115,6 +116,39 @@ public class ApplicationsRepository {
             .addOnFailureListener(e -> applicationsLiveData.setValue(new ArrayList<>()));
 
         return applicationsLiveData;
+    }
+
+    public LiveData<List<Candidate>> getCandidatesForJob(String jobId, UserRepository userRepository) {
+        MutableLiveData<List<Candidate>> candidatesLiveData = new MutableLiveData<>();
+
+        db.collection(APPLICATIONS_COLLECTION)
+            .whereEqualTo("jobId", jobId)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                List<String> candidateIds = new ArrayList<>();
+                for (DocumentSnapshot document : queryDocumentSnapshots) {
+                    Application application = documentToApplication(document);
+                    candidateIds.add(application.getCandidateId());
+                }
+                
+                if (candidateIds.isEmpty()) {
+                    candidatesLiveData.setValue(new ArrayList<>());
+                    return;
+                }
+
+                userRepository.getUsersByIds(candidateIds)
+                    .addOnSuccessListener(users -> {
+                        List<Candidate> candidates = new ArrayList<>();
+                        for (User user : users) {
+                            candidates.add((Candidate) user);
+                        }
+                        candidatesLiveData.setValue(candidates);
+                    })
+                    .addOnFailureListener(e -> candidatesLiveData.setValue(new ArrayList<>()));
+            })
+            .addOnFailureListener(e -> candidatesLiveData.setValue(new ArrayList<>()));
+
+        return candidatesLiveData;
     }
 
     public void createApplication(Application application) {

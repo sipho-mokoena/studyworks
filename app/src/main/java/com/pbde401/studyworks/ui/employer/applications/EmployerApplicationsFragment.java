@@ -14,6 +14,7 @@ public class EmployerApplicationsFragment extends Fragment {
     private EmployerApplicationsViewModel viewModel;
     private JobApplicationAdapter adapter;
     private RecyclerView recyclerView;
+    private String employerId;
 
     public EmployerApplicationsFragment() {
         // Required empty public constructor
@@ -34,12 +35,25 @@ public class EmployerApplicationsFragment extends Fragment {
         adapter = new JobApplicationAdapter(this);
         recyclerView.setAdapter(adapter);
 
-        // TODO: Get employer ID from authentication or preferences
-        String employerId = "current_employer_id";
+        // Observe employer data first
+        viewModel.getEmployerData().observe(getViewLifecycleOwner(), employer -> {
+            if (employer != null) {
+                employerId = employer.getId();
+                viewModel.loadApplicationsJobsAndCandidates(employerId);
+            }
+        });
         
-        // Observe employer applications
-        viewModel.getEmployerApplications(employerId).observe(getViewLifecycleOwner(), applications -> {
+        // Load applications and observe changes
+        viewModel.getApplications().observe(getViewLifecycleOwner(), applications -> {
             adapter.setApplications(applications);
+        });
+
+        viewModel.getApplicationsJobs().observe(getViewLifecycleOwner(), applicationsJobs -> {
+            adapter.setApplicationsJobs(applicationsJobs);
+        });
+
+        viewModel.getApplicationsCandidates().observe(getViewLifecycleOwner(), candidates -> {
+            adapter.setApplicationsCandidates(candidates);
         });
 
         return view;
