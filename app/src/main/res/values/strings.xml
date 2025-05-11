@@ -8,6 +8,7 @@
     <string name="title_notifications">Notifications</string>
     <string name="title_activity_employer_main">EmployerMainActivity</string>
     <string name="title_activity_candidate_chat">Chat</string>
+    <string name="title_activity_employer_chat">Chat</string>
 
     <!-- Bottom Navigation Menu Items -->
     <string name="menu_dashboard">Dashboard</string>
