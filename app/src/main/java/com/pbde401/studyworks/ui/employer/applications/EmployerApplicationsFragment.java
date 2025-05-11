@@ -8,8 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 import com.pbde401.studyworks.R;
-import com.pbde401.studyworks.data.models.Application;
-import com.pbde401.studyworks.ui.employer.applications.JobApplicationAdapter;
+
 
 public class EmployerApplicationsFragment extends Fragment {
     private EmployerApplicationsViewModel viewModel;
