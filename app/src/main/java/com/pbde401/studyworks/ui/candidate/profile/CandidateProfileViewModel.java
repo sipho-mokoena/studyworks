@@ -39,12 +39,12 @@ public class CandidateProfileViewModel extends ViewModel {
         isLoading.setValue(true);
         error.setValue(null);
         
-        userRepository.getUserById(userId)
+        userRepository.getUserByUid(userId)
             .addOnSuccessListener(user -> {
                 if (user instanceof Candidate) {
                     candidateData.setValue((Candidate) user);
                     
-                    profileRepository.getCandidateProfile(userId)
+                    profileRepository.getCandidateProfile(user.getId())
                         .addOnSuccessListener(profile -> {
                             profileData.setValue(profile);
                             isLoading.setValue(false);

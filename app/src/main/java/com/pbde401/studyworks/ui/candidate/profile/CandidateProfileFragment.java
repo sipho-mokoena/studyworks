@@ -98,14 +98,14 @@ public class CandidateProfileFragment extends Fragment {
             loadingIndicator.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             profileContainer.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         });
-        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
-            if (error != null && !error.isEmpty()) {
-                errorText.setVisibility(View.VISIBLE);
-                ((TextView) errorText).setText(error);
-            } else {
-                errorText.setVisibility(View.GONE);
-            }
-        });
+//        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+//            if (error != null && !error.isEmpty()) {
+//                errorText.setVisibility(View.VISIBLE);
+//                ((TextView) errorText).setText(error);
+//            } else {
+//                errorText.setVisibility(View.GONE);
+//            }
+//        });
     }
 
     private void loadProfile() {

@@ -47,6 +47,10 @@ public class CandidateApplicationsFragment extends Fragment {
             adapter.setApplications(applications);
         });
 
+        viewModel.getApplicationsJobs().observe(getViewLifecycleOwner(), applicationsJobs -> {
+            adapter.setApplicationsJobs(applicationsJobs);
+        });
+
         return view;
     }
 }

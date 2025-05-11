@@ -1,18 +1,33 @@
 package com.pbde401.studyworks.ui.candidate.jobs;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import com.pbde401.studyworks.data.models.Application;
+import com.pbde401.studyworks.data.models.Chat;
+import com.pbde401.studyworks.data.models.Job;
+import com.pbde401.studyworks.data.models.enums.ApplicationStatus;
+import com.pbde401.studyworks.data.repository.ApplicationsRepository;
+import com.pbde401.studyworks.data.repository.ChatsRepository;
+import com.pbde401.studyworks.data.repository.JobsRepository;
+import com.pbde401.studyworks.data.repository.UserRepository;
 
 import java.util.UUID;
 import java.util.Date;
 
 public class CandidateJobApplicationViewModel extends ViewModel {
-    private final MutableLiveData<JobDetail> job = new MutableLiveData<>();
-    private final MutableLiveData<ApplicationData> application = new MutableLiveData<>();
-    private final MutableLiveData<ChatData> chat = new MutableLiveData<>();
+    private final JobsRepository jobsRepository;
+    private final ApplicationsRepository applicationsRepository;
+    private final UserRepository userRepository;
+    private final ChatsRepository chatsRepository;
+
     private final MutableLiveData<Boolean> loading = new MutableLiveData<>(false);
-    private final MutableLiveData<String> error = new MutableLiveData<>();
+    private final MutableLiveData<String> error = new MutableLiveData<>();private final MutableLiveData<Job> job = new MutableLiveData<>();
+    private final MutableLiveData<Application> application = new MutableLiveData<>();
+    private final MutableLiveData<Chat> chat = new MutableLiveData<>();
+
     private String jobId;
     private String userId;
 
@@ -49,89 +64,118 @@ public class CandidateJobApplicationViewModel extends ViewModel {
         public String candidateId;
     }
 
-    public void init(String jobId) {
+    public CandidateJobApplicationViewModel(
+            JobsRepository jobsRepository,
+            ApplicationsRepository applicationsRepository,
+            UserRepository userRepository,
+            ChatsRepository chatsRepository) {
+        this.jobsRepository = jobsRepository;
+        this.applicationsRepository = applicationsRepository;
+        this.userRepository = userRepository;
+        this.chatsRepository = chatsRepository;
+    }
+
+    public void init(String jobId, String userId) {
         this.jobId = jobId;
+        this.userId = userId;
         loadJob();
         loadApplication();
     }
 
     public void loadJob() {
         loading.setValue(true);
-        // TODO: Replace with actual API call
-        // Simulated API call
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000); // Simulate network delay
-                JobDetail jobDetail = new JobDetail();
-                // Populate with mock data for now
-                jobDetail.id = jobId;
-                jobDetail.title = "Software Engineer";
-                jobDetail.company = "Tech Corp";
-                // ... populate other fields
-                
-                job.postValue(jobDetail);
-                loading.postValue(false);
-            } catch (Exception e) {
-                error.postValue("Failed to load job: " + e.getMessage());
-                loading.postValue(false);
+        if (jobId == null) {
+            error.setValue("Job ID is missing");
+            loading.setValue(false);
+            return;
+        }
+
+        jobsRepository.getJob(jobId).observeForever(jobData -> {
+            if (jobData != null) {
+                job.setValue(jobData);
+            } else {
+                error.setValue("Job not found");
             }
-        }).start();
+            loading.setValue(false);
+        });
     }
 
     private void loadApplication() {
-        if (jobId == null || userId == null) return;
-        
-        // TODO: Replace with actual API call
-        // Similar implementation as loadJob()
+        if (jobId == null || userId == null) {
+            error.setValue("Missing job or user information");
+            return;
+        }
+
+        applicationsRepository.getApplicationByJobAndCandidateId(jobId, userId)
+                .observeForever(applicationData -> {
+                    application.setValue(applicationData);
+                    if (applicationData != null) {
+                        loadChat();
+                    }
+                });
     }
 
     private void loadChat() {
-        ApplicationData currentApplication = application.getValue();
+        Application currentApplication = application.getValue();
         if (currentApplication == null) return;
 
-        // TODO: Replace with actual API call
-        // Similar implementation as loadJob()
+        // Assuming you have a method to get chat by employer and candidate
+        chatsRepository.getChatByEmployerIdAndCandidateId(
+                currentApplication.getEmployerId(),
+                currentApplication.getCandidateId()
+        ).observeForever(chat::setValue);
+    }
+
+    public LiveData<Job> getJob() {
+        return jobsRepository.getJob(jobId);
+    }
+
+    public LiveData<Application> getApplication() {
+        return applicationsRepository.getApplicationByJobAndCandidateId(jobId, userId);
+    }
+
+    public LiveData<Chat> getChat() {
+        return chat;
     }
 
     public void submitApplication(String coverLetter, String portfolioUrl, String linkedinUrl) {
-        if (job.getValue() == null) {
-            error.setValue("Job information not available");
+        if (jobId == null || userId == null) {
+            error.setValue("Missing job or user information");
             return;
         }
 
         loading.setValue(true);
         error.setValue(null);
 
-        ApplicationData newApplication = new ApplicationData();
-        newApplication.id = UUID.randomUUID().toString();
-        newApplication.jobId = jobId;
-        newApplication.candidateId = userId;
-        newApplication.employerId = job.getValue().companyId;
-        newApplication.status = "Submitted";
-        newApplication.progress = 40;
-        newApplication.appliedAt = new Date().toString();
-        newApplication.coverLetter = coverLetter;
-        newApplication.portfolioUrl = portfolioUrl;
-        newApplication.linkedinUrl = linkedinUrl;
+        // Get job details first
+        jobsRepository.getJob(jobId).observeForever(job -> {
+            if (job != null) {
+                Application application = new Application(
+                        UUID.randomUUID().toString(),
+                        new Date(),
+                        new Date(),
+                        jobId,
+                        userId,
+                        job.getCompanyId(),
+                        ApplicationStatus.SUBMITTED,
+                        new Date(),
+                        null, // resumeUrl
+                        coverLetter,
+                        portfolioUrl,
+                        linkedinUrl,
+                        40,
+                        null // interview
+                );
 
-        // TODO: Replace with actual API call
-        // Simulated API call
-        new Thread(() -> {
-            try {
-                Thread.sleep(1000); // Simulate network delay
-                application.postValue(newApplication);
-                loading.postValue(false);
-            } catch (Exception e) {
-                error.postValue("Failed to submit application: " + e.getMessage());
-                loading.postValue(false);
+                applicationsRepository.createApplication(application);
+                loading.setValue(false);
+            } else {
+                error.setValue("Failed to load job details");
+                loading.setValue(false);
             }
-        }).start();
+        });
     }
 
-    // Getters for LiveData
-    public LiveData<JobDetail> getJob() { return job; }
-    public LiveData<ApplicationData> getApplication() { return application; }
-    public LiveData<ChatData> getChat() { return chat; }
     public LiveData<Boolean> getLoading() { return loading; }
     public LiveData<String> getError() { return error; }
 }

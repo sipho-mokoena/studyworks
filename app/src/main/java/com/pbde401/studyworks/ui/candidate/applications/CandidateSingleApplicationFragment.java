@@ -32,10 +32,12 @@ import androidx.navigation.Navigation;
 import android.app.AlertDialog;
 import com.pbde401.studyworks.data.models.enums.ApplicationStatus;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class CandidateSingleApplicationFragment extends Fragment {
 
     private CandidateSingleApplicationViewModel mViewModel;
-    private ImageButton btnBack;
     private TextView tvJobTitle;
     private TextView tvCompany;
     private TextView tvStatus;
@@ -62,7 +64,6 @@ public class CandidateSingleApplicationFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_candidate_single_application, container, false);
         mViewModel = new ViewModelProvider(this).get(CandidateSingleApplicationViewModel.class);
-        btnBack = view.findViewById(R.id.btnBack);
         tvJobTitle = view.findViewById(R.id.tvJobTitleDetail);
         tvCompany = view.findViewById(R.id.tvCompanyNameDetail);
         tvStatus = view.findViewById(R.id.tvStatusDetail);
@@ -80,7 +81,6 @@ public class CandidateSingleApplicationFragment extends Fragment {
         btnMessage = view.findViewById(R.id.btnMessage);
         btnDelete = view.findViewById(R.id.btnDelete);
 
-        btnBack.setOnClickListener(v -> requireActivity().onBackPressed());
         String applicationId = getArguments() != null ? getArguments().getString("applicationId") : null;
         if (applicationId != null) {
             mViewModel.getApplication(applicationId).observe(getViewLifecycleOwner(), new Observer<Application>() {
@@ -89,7 +89,7 @@ public class CandidateSingleApplicationFragment extends Fragment {
                     if (app == null) return;
                     tvJobTitle.setText(app.getJobTitle());
                     tvStatus.setText(app.getStatus().getValue());
-                    tvAppliedDate.setText(app.getAppliedAt().toString());
+                    tvAppliedDate.setText(String.format("%s", formatDate(app.getCreatedAt())));
                     tvCoverLetter.setText(app.getCoverLetter() != null ? app.getCoverLetter() : "Not provided");
                     if (app.getPortfolioUrl() != null) {
                         tvPortfolioLabel.setVisibility(View.VISIBLE);
@@ -106,6 +106,7 @@ public class CandidateSingleApplicationFragment extends Fragment {
                         @Override
                         public void onChanged(Job job) {
                             if (job == null) return;
+                            tvJobTitle.setText(job.getTitle());
                             tvCompany.setText(job.getCompanyName());
                             tvJobDesc.setText(job.getDescription());
                             layoutReq.removeAllViews();
@@ -192,5 +193,10 @@ public class CandidateSingleApplicationFragment extends Fragment {
             });
         }
         return view;
+    }
+
+    private String formatDate(java.util.Date date) {
+        if (date == null) return "";
+        return new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date);
     }
 }

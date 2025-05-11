@@ -5,15 +5,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 import com.pbde401.studyworks.R;
 import com.pbde401.studyworks.data.models.Application;
+import com.pbde401.studyworks.data.models.Job;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.ApplicationViewHolder> {
     private List<Application> applications = new ArrayList<>();
+    private Map<String, List<Job>> applicationsJobs = new HashMap<>();
     private final CandidateApplicationsFragment fragment;
 
     public ApplicationAdapter(CandidateApplicationsFragment fragment) {
@@ -40,6 +49,10 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     public void setApplications(List<Application> applications) {
         this.applications = applications;
+    }
+
+    public void setApplicationsJobs(Map<String, List<Job>> applicationsJobs) {
+        this.applicationsJobs = applicationsJobs;
         notifyDataSetChanged();
     }
 
@@ -47,18 +60,33 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         private final TextView jobTitleView;
         private final TextView statusView;
         private final TextView dateView;
+        private final TextView companyNameView;
 
         ApplicationViewHolder(View itemView) {
             super(itemView);
             jobTitleView = itemView.findViewById(R.id.tvJobTitle);
             statusView = itemView.findViewById(R.id.tvStatus);
+            companyNameView = itemView.findViewById(R.id.tvCompanyName);
             dateView = itemView.findViewById(R.id.tvAppliedDate);
         }
 
         void bindApplication(Application application) {
-            jobTitleView.setText(application.getJobTitle());
+            Job job = null;
+            if (applicationsJobs.containsKey(application.getId())) {
+                List<Job> jobs = applicationsJobs.get(application.getId());
+                if (jobs != null && !jobs.isEmpty()) {
+                    job = jobs.get(0);
+                }
+            }
+            if (job != null) {
+                jobTitleView.setText(job.getTitle());
+                companyNameView.setText(job.getCompanyName());
+            } else {
+                jobTitleView.setText("Unknown Job");
+                companyNameView.setText("Unknown Company");
+            }
             statusView.setText(application.getStatus().getValue());
-            dateView.setText(application.getAppliedAt().toString());
+            dateView.setText(String.format("%s", formatDate(application.getAppliedAt())));
             
             itemView.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
@@ -67,5 +95,11 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                     .navigate(R.id.action_navigation_candidate_applications_to_navigation_candidate_single_application, bundle);
             });
         }
+
+        private String formatDate(java.util.Date date) {
+            if (date == null) return "";
+            return new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date);
+        }
+
     }
 }

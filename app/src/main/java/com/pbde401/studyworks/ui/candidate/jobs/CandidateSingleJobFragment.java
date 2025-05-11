@@ -98,7 +98,7 @@ public class CandidateSingleJobFragment extends Fragment {
 
         btnViewApplication.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            bundle.putString("applicationId", viewModel.getApplicationId());
+            bundle.putString("jobId", jobId);
             Navigation.findNavController(v)
                     .navigate(R.id.action_navigation_candidate_single_job_to_navigation_candidate_job_application, bundle);
         });
