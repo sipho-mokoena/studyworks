@@ -5,23 +5,50 @@
     android:id="@+id/navigation_employer_graph"
     app:startDestination="@id/navigation_employer_jobs">
 
-<!--    <fragment-->
-<!--        android:id="@+id/navigation_employer_dashboard"-->
-<!--        android:name="com.pbde401.studyworks.ui.employer.dashboard.EmployerDashboardFragment"-->
-<!--        android:label="Dashboard"-->
-<!--        tools:layout="@layout/fragment_employer_dashboard" />-->
-
     <fragment
         android:id="@+id/navigation_employer_jobs"
         android:name="com.pbde401.studyworks.ui.employer.jobs.EmployerJobsFragment"
         android:label="Jobs"
-        tools:layout="@layout/fragment_employer_jobs" />
+        tools:layout="@layout/fragment_employer_jobs">
+        <action
+            android:id="@+id/action_navigation_employer_jobs_to_navigation_employer_single_job"
+            app:destination="@id/navigation_employer_single_job" />
+    </fragment>
+
+    <!-- Single Job Detail -->
+    <fragment
+        android:id="@+id/navigation_employer_single_job"
+        android:name="com.pbde401.studyworks.ui.employer.jobs.EmployerSingleJobFragment"
+        android:label="Job Details"
+        tools:layout="@layout/fragment_employer_single_job">
+        <argument
+            android:name="jobId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_navigation_employer_single_job_to_navigation_employer_single_application"
+            app:destination="@id/navigation_employer_single_application" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_employer_applications"
         android:name="com.pbde401.studyworks.ui.employer.applications.EmployerApplicationsFragment"
         android:label="Applications"
-        tools:layout="@layout/fragment_employer_applications" />
+        tools:layout="@layout/fragment_employer_applications">
+        <action
+            android:id="@+id/action_navigation_employer_applications_to_navigation_employer_single_application"
+            app:destination="@id/navigation_employer_single_application" />
+    </fragment>
+
+    <!-- Single Application Detail -->
+    <fragment
+        android:id="@+id/navigation_employer_single_application"
+        android:name="com.pbde401.studyworks.ui.employer.applications.EmployerSingleApplicationFragment"
+        android:label="Application Details"
+        tools:layout="@layout/fragment_employer_single_application">
+        <argument
+            android:name="applicationId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_employer_chats"
