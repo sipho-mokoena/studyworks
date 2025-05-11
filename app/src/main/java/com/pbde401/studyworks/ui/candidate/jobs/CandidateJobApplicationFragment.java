@@ -100,6 +100,7 @@ public class CandidateJobApplicationFragment extends Fragment {
 
         setupObservers();
         setupListeners();
+        setupNavigation();
     }
 
     private void setupObservers() {
@@ -126,6 +127,9 @@ public class CandidateJobApplicationFragment extends Fragment {
 
         viewModel.getLoading().observe(getViewLifecycleOwner(), this::updateLoadingState);
         viewModel.getError().observe(getViewLifecycleOwner(), this::showError);
+        viewModel.getChat().observe(getViewLifecycleOwner(), chat -> {
+            messageRecruiterButton.setVisibility(chat != null ? View.VISIBLE : View.GONE);
+        });
     }
 
     private void setupListeners() {
@@ -168,6 +172,12 @@ public class CandidateJobApplicationFragment extends Fragment {
         });
     }
 
+    public void onMessageRecruiterButtonClick(Chat chat) {
+        Intent intent = new Intent(requireContext(), CandidateChatActivity.class);
+        intent.putExtra("chatId", chat.getId());
+        startActivity(intent);
+    }
+
     private void disableForm() {
         coverLetterInput.setEnabled(false);
         portfolioUrlInput.setEnabled(false);
@@ -202,11 +212,5 @@ public class CandidateJobApplicationFragment extends Fragment {
         }
 
         return isValid;
-    }
-
-    public void onMessageRecruiterButtonClick(Chat chat) {
-        Intent intent = new Intent(requireContext(), CandidateChatActivity.class);
-        intent.putExtra("chatId", chat.getId());
-        startActivity(intent);
     }
 }
