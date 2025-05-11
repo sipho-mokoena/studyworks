@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_navigation_employer_jobs_to_navigation_employer_single_job"
             app:destination="@id/navigation_employer_single_job" />
+        <action
+            android:id="@+id/action_navigation_employer_jobs_to_navigation_employer_create_edit_job"
+            app:destination="@id/navigation_employer_create_edit_job" />
     </fragment>
 
     <!-- Single Job Detail -->
@@ -48,6 +51,22 @@
         <argument
             android:name="applicationId"
             app:argType="string" />
+    </fragment>
+
+    <!-- Create/Edit Job Screen -->
+    <fragment
+        android:id="@+id/navigation_employer_create_edit_job"
+        android:name="com.pbde401.studyworks.ui.employer.jobs.EmployerCreateEditJobFragment"
+        android:label="Create Job"
+        tools:layout="@layout/fragment_employer_create_edit_job">
+        <argument
+            android:name="jobId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_navigation_employer_create_edit_job_to_navigation_employer_jobs"
+            app:destination="@id/navigation_employer_jobs" />
     </fragment>
 
     <fragment
