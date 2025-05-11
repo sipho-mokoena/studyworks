@@ -53,6 +53,19 @@ public class UserRepository {
                     return null;
                 });
     }
+
+    public Task<User> getUserByUid(String uid) {
+        return db.collection(USERS_COLLECTION)
+                .whereEqualTo("uid", uid)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                        return documentToUser(document);
+                    }
+                    return null;
+                });
+    }
     
     public Task<Void> createUser(User user) {
         Map<String, Object> userData = new HashMap<>();

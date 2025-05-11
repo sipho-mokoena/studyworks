@@ -26,7 +26,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:text="Unknown"/>
 
             <TextView
                 android:id="@+id/tvStatus"
@@ -45,14 +46,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:text="Unknown" />
 
         <TextView
             android:id="@+id/tvAppliedDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:layout_marginTop="4dp" />
+            android:layout_marginTop="4dp"
+            android:text="Unknown"/>
 
     </LinearLayout>
 

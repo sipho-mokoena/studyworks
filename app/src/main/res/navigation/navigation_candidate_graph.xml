@@ -46,6 +46,9 @@
         <argument
             android:name="jobId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_navigation_candidate_job_application_to_navigation_candidate_chats"
+            app:destination="@id/navigation_candidate_chats" />
     </fragment>
 
     <fragment
