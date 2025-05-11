@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp">
 
         <!-- Header section -->
         <TextView
@@ -32,8 +33,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardElevation="2dp">
+            android:layout_marginTop="16dp" >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -111,6 +111,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/emptyStateText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No job listings found. Create your first job posting."
+            android:textAlignment="center"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textColor="?android:textColorSecondary"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/errorStateText" 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Something went wrong. Please try again."
+            android:textAlignment="center"
+            android:gravity="center"
+            android:padding="16dp"
+            android:textColor="@color/red_600"
             android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView

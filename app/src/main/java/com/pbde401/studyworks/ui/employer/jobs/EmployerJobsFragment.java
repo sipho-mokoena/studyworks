@@ -1,5 +1,6 @@
 package com.pbde401.studyworks.ui.employer.jobs;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +9,17 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 import com.pbde401.studyworks.R;
 import com.pbde401.studyworks.data.models.Job;
 import com.pbde401.studyworks.ui.candidate.jobs.JobListingAdapter;
+
+import java.util.List;
 
 public class EmployerJobsFragment extends Fragment implements JobListingAdapter.OnJobClickListener {
     private EmployerJobsViewModel viewModel;
@@ -26,6 +31,8 @@ public class EmployerJobsFragment extends Fragment implements JobListingAdapter.
     private Button btnApplyFilters;
     private Button btnClearFilters;
     private Button btnCreateJob;
+    private TextView emptyStateText;
+    private TextView errorStateText;
 
     public EmployerJobsFragment() {
         // Required empty public constructor
@@ -58,6 +65,8 @@ public class EmployerJobsFragment extends Fragment implements JobListingAdapter.
         btnApplyFilters = view.findViewById(R.id.btnApplyFilters);
         btnClearFilters = view.findViewById(R.id.btnClearFilters);
         btnCreateJob = view.findViewById(R.id.btnCreateJob);
+        emptyStateText = view.findViewById(R.id.emptyStateText);
+        errorStateText = view.findViewById(R.id.errorStateText);
         
         adapter = new JobListingAdapter(this);
         recyclerView.setAdapter(adapter);
@@ -83,14 +92,57 @@ public class EmployerJobsFragment extends Fragment implements JobListingAdapter.
     }
 
     private void observeViewModel() {
-        String employerId = "current_employer_id"; // TODO: Get from auth
-        viewModel = new ViewModelProvider(this).get(EmployerJobsViewModel.class);
-        
-        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> 
-            loadingIndicator.setVisibility(isLoading ? View.VISIBLE : View.GONE));
-            
-        viewModel.getEmployerJobs(employerId).observe(getViewLifecycleOwner(), 
-            jobs -> adapter.setJobs(jobs));
+        viewModel.getEmployerData().observe(getViewLifecycleOwner(), employer -> {
+            if (employer != null && employer.getId() != null) {
+                viewModel.getEmployerJobs(employer.getId());
+                observeJobs();
+            }
+        });
+
+        viewModel.getError().observe(getViewLifecycleOwner(), errorMessage -> {
+            if (errorMessage != null) {
+                showError(errorMessage);
+            }
+        });
+
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), this::updateLoadingState);
+    }
+
+    private void observeJobs() {
+        LiveData<List<Job>> jobsLiveData = viewModel.getAllEmployerJobs();
+        if (jobsLiveData != null) {
+            jobsLiveData.observe(getViewLifecycleOwner(), jobs -> {
+                if (jobs != null) {
+                    adapter.setJobs(jobs);
+                    updateUIState(jobs.size());
+                } else {
+                    updateUIState(0);
+                }
+            });
+        }
+    }
+
+    private void updateLoadingState(boolean isLoading) {
+        loadingIndicator.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        recyclerView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        emptyStateText.setVisibility(View.GONE);
+        errorStateText.setVisibility(View.GONE);
+    }
+
+    private void updateUIState(int jobCount) {
+        recyclerView.setVisibility(jobCount > 0 ? View.VISIBLE : View.GONE);
+        emptyStateText.setVisibility(jobCount == 0 ? View.VISIBLE : View.GONE);
+        errorStateText.setVisibility(View.GONE);
+        loadingIndicator.setVisibility(View.GONE);
+    }
+
+    private void showError(String message) {
+        errorStateText.setText(message);
+        recyclerView.setVisibility(View.GONE);
+        emptyStateText.setVisibility(View.GONE);
+        errorStateText.setVisibility(View.VISIBLE);
+        loadingIndicator.setVisibility(View.GONE);
+        btnCreateJob.setEnabled(true);
     }
 
     private void applyFilters() {
@@ -107,16 +159,23 @@ public class EmployerJobsFragment extends Fragment implements JobListingAdapter.
     private void clearFilters() {
         workModeDropdown.setText("All", false);
         jobTypeDropdown.setText("All", false);
-        String employerId = "current_employer_id"; // TODO: Get from auth
-        viewModel.getEmployerJobs(employerId);
+        // Use the cached jobs instead of making a new request
+        viewModel.getAllEmployerJobs().observe(getViewLifecycleOwner(), jobs -> {
+            adapter.setJobs(jobs);
+            updateUIState(jobs.size());
+        });
     }
 
     private void navigateToCreateJob() {
-        // TODO: Implement navigation to create job screen
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_navigation_employer_jobs_to_navigation_employer_create_edit_job);
     }
 
     @Override
     public void onJobClick(Job job) {
-        // TODO: Navigate to job details
+        Bundle bundle = new Bundle();
+        bundle.putString("jobId", job.getId());
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_navigation_employer_jobs_to_navigation_employer_single_job, bundle);
     }
 }
