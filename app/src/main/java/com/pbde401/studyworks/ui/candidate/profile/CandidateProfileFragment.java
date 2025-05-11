@@ -60,7 +60,6 @@ public class CandidateProfileFragment extends Fragment {
 
     private void initializeViews(View view) {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
-        errorText = view.findViewById(R.id.error_text);
         profileContainer = view.findViewById(R.id.profile_container);
         
         fullNameInput = view.findViewById(R.id.full_name);
