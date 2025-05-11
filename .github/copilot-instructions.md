@@ -1,7 +1,6 @@
 The following are instructions to be used by Copilot when generating code. These instructions are designed to ensure that the code generated is correct, efficient, and maintainable.
 
 2. For each file that needs changes:
-
    - Read the ENTIRE file first
    - Document the current functionality
    - Plan changes while preserving existing behavior
@@ -9,7 +8,6 @@ The following are instructions to be used by Copilot when generating code. These
    - Validate changes don't break existing functionality
 
 3. Implementation Steps:
-
    - Start with core functionality changes
    - Test each change before moving to the next
    - Keep existing working code intact
@@ -17,7 +15,6 @@ The following are instructions to be used by Copilot when generating code. These
    - Document any assumptions made
 
 4. Code Review Steps:
-
    - Verify all changes are necessary
    - Check that existing functionality is preserved
    - Validate no unintended side effects
@@ -31,9 +28,9 @@ The following are instructions to be used by Copilot when generating code. These
    - If a change causes issues, revert immediately
 
 Key Principles:
-
 - Do no harm to existing code
 - Make minimal necessary changes
 - Understand before modifying
 - Test after each change
 - Revert problematic changes immediately
+- Don't add mocks or stubs under any circumstances
