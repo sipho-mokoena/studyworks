@@ -1,66 +1,62 @@
 package com.pbde401.studyworks.ui.employer.chats;
 
+import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.pbde401.studyworks.R;
+import com.pbde401.studyworks.data.models.Chat;
+import com.pbde401.studyworks.ui.employer.chats.EmployerChatListAdapter;
+import com.pbde401.studyworks.util.AuthManager;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link EmployerChatsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class EmployerChatsFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public EmployerChatsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EmployerChatsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static EmployerChatsFragment newInstance(String param1, String param2) {
-        EmployerChatsFragment fragment = new EmployerChatsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+public class EmployerChatsFragment extends Fragment implements EmployerChatListAdapter.OnEmployerChatClickListener {
+    private EmployerChatsViewModel viewModel;
+    private AuthManager authManager;
+    private EmployerChatListAdapter adapter;
+    private RecyclerView rvChats;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        viewModel = new ViewModelProvider(this).get(EmployerChatsViewModel.class);
+        
+        authManager = AuthManager.getInstance();
+        authManager.getCurrentUser().observe(this, user -> {
+            if (user != null) viewModel.loadChats(user);
+        });
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_employer_chats, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_employer_chats, container, false);
+        
+        rvChats = view.findViewById(R.id.rvEmployerChats);
+        rvChats.setLayoutManager(new LinearLayoutManager(requireContext()));
+        
+        adapter = new EmployerChatListAdapter(this);
+        rvChats.setAdapter(adapter);
+
+        viewModel.getChats().observe(getViewLifecycleOwner(), chats -> {
+            if (chats != null && !chats.isEmpty()) {
+                adapter.setChats(chats);
+                rvChats.setVisibility(View.VISIBLE);
+            } else {
+                rvChats.setVisibility(View.GONE);
+            }
+        });
+
+        return view;
+    }
+
+    @Override
+    public void onChatClick(Chat chat) {
+        Intent intent = new Intent(requireContext(), EmployerChatActivity.class);
+        intent.putExtra("chatId", chat.getId());
+        startActivity(intent);
     }
 }
