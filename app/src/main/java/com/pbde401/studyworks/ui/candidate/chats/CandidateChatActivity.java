@@ -20,7 +20,7 @@ public class CandidateChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_candidate_chat);
+        setContentView(R.layout.activity_candidate_chat_main);
 
         // Setup toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
