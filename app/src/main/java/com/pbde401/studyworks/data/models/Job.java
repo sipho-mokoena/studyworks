@@ -188,4 +188,93 @@ public class Job extends BaseModel {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public boolean isValid() {
+        return !title.trim().isEmpty() &&
+               !companyId.trim().isEmpty() &&
+               !location.trim().isEmpty() &&
+               !description.trim().isEmpty();
+    }
+
+    public static class Builder {
+        private final Job job;
+
+        public Builder() {
+            this.job = new Job();
+        }
+
+        public Builder withId(String id) {
+            job.setId(id);
+            return this;
+        }
+
+        public Builder withTitle(String title) {
+            job.setTitle(title);
+            return this;
+        }
+
+        public Builder withCompanyId(String companyId) {
+            job.setCompanyId(companyId);
+            return this;
+        }
+
+        public Builder withCompanyName(String companyName) {
+            job.setCompanyName(companyName);
+            return this;
+        }
+
+        public Builder withLocation(String location) {
+            job.setLocation(location);
+            return this;
+        }
+
+        public Builder withType(JobType type) {
+            job.setType(type);
+            return this;
+        }
+
+        public Builder withWorkMode(WorkMode workMode) {
+            job.setWorkMode(workMode);
+            return this;
+        }
+
+        public Builder withDescription(String description) {
+            job.setDescription(description);
+            return this;
+        }
+
+        public Builder withLevel(String level) {
+            job.setLevel(level);
+            return this;
+        }
+
+        public Builder withRequirements(List<String> requirements) {
+            job.setRequirements(requirements);
+            return this;
+        }
+
+        public Builder withResponsibilities(List<String> responsibilities) {
+            job.setResponsibilities(responsibilities);
+            return this;
+        }
+
+        public Builder withBenefits(List<String> benefits) {
+            job.setBenefits(benefits);
+            return this;
+        }
+
+        public Builder withSalary(String salary) {
+            job.setSalary(salary);
+            return this;
+        }
+
+        public Builder withActive(boolean active) {
+            job.setActive(active);
+            return this;
+        }
+
+        public Job build() {
+            return job;
+        }
+    }
 }

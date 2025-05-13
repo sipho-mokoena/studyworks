@@ -60,7 +60,7 @@
     <fragment
         android:id="@+id/navigation_employer_create_edit_job"
         android:name="com.pbde401.studyworks.ui.employer.jobs.EmployerCreateEditJobFragment"
-        android:label="Create Job"
+        android:label="Create or Edit Job"
         tools:layout="@layout/fragment_employer_create_edit_job">
         <argument
             android:name="jobId"
