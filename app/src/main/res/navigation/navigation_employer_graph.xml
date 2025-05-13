@@ -54,6 +54,7 @@
         <argument
             android:name="applicationId"
             app:argType="string" />
+        <!-- Removed chat navigation action since we're using an Activity -->
     </fragment>
 
     <!-- Create/Edit Job Screen -->
@@ -71,12 +72,6 @@
             android:id="@+id/action_navigation_employer_create_edit_job_to_navigation_employer_jobs"
             app:destination="@id/navigation_employer_jobs" />
     </fragment>
-
-    <fragment
-        android:id="@+id/navigation_employer_chats"
-        android:name="com.pbde401.studyworks.ui.employer.chats.EmployerChatsFragment"
-        android:label="Chats"
-        tools:layout="@layout/fragment_employer_chats" />
 
     <fragment
         android:id="@+id/navigation_employer_profile"
