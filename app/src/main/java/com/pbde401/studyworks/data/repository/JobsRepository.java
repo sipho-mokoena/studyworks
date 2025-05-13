@@ -130,20 +130,30 @@ public class JobsRepository {
 
     public LiveData<Job> createJob(Job job) {
         MutableLiveData<Job> jobLiveData = new MutableLiveData<>();
+        Map<String, Object> jobDocument = jobToDocument(job);
 
         db.collection(JOBS_COLLECTION)
             .document(job.getId())
-            .set(jobToMap(job))
+            .set(jobDocument)
             .addOnSuccessListener(aVoid -> jobLiveData.setValue(job))
             .addOnFailureListener(e -> jobLiveData.setValue(null));
 
         return jobLiveData;
     }
 
-    public void updateJob(String jobId, Map<String, Object> updates) {
+    public LiveData<Job> updateJob(String jobId, Map<String, Object> updates) {
+        MutableLiveData<Job> jobLiveData = new MutableLiveData<>();
+
         db.collection(JOBS_COLLECTION)
             .document(jobId)
-            .update(updates);
+            .update(updates)
+            .addOnSuccessListener(aVoid -> {
+                // Fetch the updated job
+                getJob(jobId).observeForever(jobLiveData::setValue);
+            })
+            .addOnFailureListener(e -> jobLiveData.setValue(null));
+
+        return jobLiveData;
     }
 
     public void deleteJob(String jobId) {
@@ -289,6 +299,26 @@ public class JobsRepository {
             salary,
             active
         );
+    }
+
+    private Map<String, Object> jobToDocument(Job job) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", job.getId());
+        map.put("title", job.getTitle());
+        map.put("description", job.getDescription());
+        map.put("location", job.getLocation());
+        map.put("companyId", job.getCompanyId());
+        map.put("companyName", job.getCompanyName());
+        map.put("type", job.getType().getValue());
+        map.put("workMode", job.getWorkMode().getValue());
+        map.put("level", job.getLevel());
+        map.put("requirements", job.getRequirements());
+        map.put("responsibilities", job.getResponsibilities());
+        map.put("benefits", job.getBenefits());
+        map.put("candidateIds", job.getCandidateIds());
+        map.put("salary", job.getSalary());
+        map.put("active", job.isActive());
+        return map;
     }
 
     @NonNull
