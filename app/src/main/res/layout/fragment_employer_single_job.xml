@@ -39,10 +39,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardElevation="1dp"
-                app:strokeWidth="1dp"
-                app:strokeColor="@color/cardview_shadow_start_color">
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -63,26 +60,24 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:textSize="20sp"
-                            android:textStyle="bold"/>
-
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/application_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"/>
+                            android:textStyle="bold"
+                            android:text="Unknown" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/company_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="?android:textColorSecondary"/>
+                        android:textStyle="bold"
+                        android:textColor="?android:textColorSecondary"
+                        android:text="Unknown" />
 
                     <TextView
-                        android:id="@+id/applied_date"
+                        android:id="@+id/created_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="?android:textColorSecondary"
+                        android:text="Unknown"
                         android:layout_marginTop="4dp"/>
 
                     <View
@@ -103,7 +98,70 @@
                     <TextView
                         android:id="@+id/job_description"
                         android:layout_width="match_parent"
+                        android:text="Unknown"
                         android:layout_height="wrap_content"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?android:dividerVertical"
+                        android:layout_marginVertical="16dp"/>
+
+                    <!-- Job Section -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Job Details"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="8dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="8dp">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp">
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/job_type"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checkable="false"
+                                android:text="Full-time"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/work_mode"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checkable="false"
+                                android:text="On-site"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/job_level"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checkable="false"
+                                android:text="Senior Level"
+                                style="@style/Widget.MaterialComponents.Chip.Choice" />
+                        </com.google.android.material.chip.ChipGroup>
+
+                        <TextView
+                            android:id="@+id/job_salary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textSize="16sp"
+                            android:textColor="@color/primary"
+                            android:textStyle="bold"
+                            android:text="R0 - R0/month" />
+                    </LinearLayout>
 
                     <!-- Requirements Section -->
                     <TextView
@@ -115,41 +173,23 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"/>
 
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/requirements_group"
+                    <LinearLayout
+                        android:id="@+id/requirementsList"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="?android:dividerVertical"
-                        android:layout_marginVertical="16dp"/>
-
-                    <!-- Candidate Section -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Candidate Details"
-                        android:textSize="18sp"
+                        android:text="Responsibilities"
+                        android:textSize="16sp"
                         android:textStyle="bold"
+                        android:layout_marginTop="16dp"
                         android:layout_marginBottom="8dp"/>
 
-                    <TextView
-                        android:id="@+id/candidate_name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="16sp"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Education"
-                        android:textStyle="bold"
-                        android:layout_marginTop="16dp"/>
-
                     <LinearLayout
-                        android:id="@+id/education_container"
+                        android:id="@+id/responsibilitiesList"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"/>
@@ -157,27 +197,16 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Experience"
+                        android:text="Benefits"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         android:layout_marginTop="16dp"/>
 
                     <LinearLayout
-                        android:id="@+id/experience_container"
+                        android:id="@+id/benefitsList"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"/>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Skills"
-                        android:textStyle="bold"
-                        android:layout_marginTop="16dp"/>
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/skills_group"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
 
                     <!-- Action Buttons -->
                     <LinearLayout
@@ -187,25 +216,10 @@
                         android:layout_marginTop="24dp">
 
                         <com.google.android.material.button.MaterialButton
-                            android:id="@+id/message_button"
+                            android:id="@+id/delete_job_button"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Message Candidate"
-                            app:cornerRadius="4dp"/>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/interview_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Interview Candidate"
-                            android:layout_marginTop="8dp"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/reject_button"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Reject Application"
+                            android:text="Delete Job"
                             android:layout_marginTop="8dp"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             app:strokeColor="@android:color/holo_red_dark"

@@ -1,5 +1,6 @@
 package com.pbde401.studyworks.ui.employer.jobs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,41 +24,43 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.button.MaterialButton;
+import com.pbde401.studyworks.data.models.Job;
+import com.pbde401.studyworks.ui.candidate.chats.CandidateChatActivity;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Date;
+import java.util.TimeZone;
+
 import androidx.lifecycle.ViewModelProvider;
 
 public class EmployerSingleJobFragment extends Fragment {
     private String applicationId;
+    private String jobId;
     private EmployerSingleJobViewModel viewModel;
     
     private ProgressBar loadingProgress;
     private TextView errorText;
     private View contentContainer;
     
-    private TextView jobTitle, companyName, appliedDate, jobDescription, candidateName;
-    private Chip applicationStatus;
-    private ChipGroup requirementsGroup, skillsGroup;
-    private LinearLayout educationContainer, experienceContainer;
-    private MaterialButton messageButton, interviewButton, rejectButton;
-    private FirebaseFirestore db;
+    private TextView jobTitle, companyName, createdDate, jobDescription, salary;
+    private Chip jobType, workMode, level;
+    private MaterialButton deleteJobButton;
+    private LinearLayout requirementsList, responsibilitiesList, benefitsList;
+    private ChipGroup chipGroup;
 
-    public static EmployerSingleJobFragment newInstance(String applicationId) {
-        EmployerSingleJobFragment fragment = new EmployerSingleJobFragment();
-        Bundle args = new Bundle();
-        args.putString("applicationId", applicationId);
-        fragment.setArguments(args);
-        return fragment;
+    public static EmployerSingleJobFragment newInstance() {
+        return new EmployerSingleJobFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(EmployerSingleJobViewModel.class);
-        if (getArguments() != null) {
-            applicationId = getArguments().getString("applicationId");
-        }
+
+        // Get jobId from arguments
+        jobId = getArguments() != null ? getArguments().getString("jobId") : null;
     }
 
     @Override
@@ -77,22 +80,24 @@ public class EmployerSingleJobFragment extends Fragment {
         
         jobTitle = view.findViewById(R.id.job_title);
         companyName = view.findViewById(R.id.company_name);
-        appliedDate = view.findViewById(R.id.applied_date);
+        createdDate = view.findViewById(R.id.created_date);
         jobDescription = view.findViewById(R.id.job_description);
-        candidateName = view.findViewById(R.id.candidate_name);
-        applicationStatus = view.findViewById(R.id.application_status);
-        requirementsGroup = view.findViewById(R.id.requirements_group);
-        skillsGroup = view.findViewById(R.id.skills_group);
-        educationContainer = view.findViewById(R.id.education_container);
-        experienceContainer = view.findViewById(R.id.experience_container);
-        
-        messageButton = view.findViewById(R.id.message_button);
-        interviewButton = view.findViewById(R.id.interview_button);
-        rejectButton = view.findViewById(R.id.reject_button);
-        
-        setupObservers();
+        requirementsList = view.findViewById(R.id.requirementsList);
+        responsibilitiesList = view.findViewById(R.id.responsibilitiesList);
+        benefitsList = view.findViewById(R.id.benefitsList);
+        jobType = view.findViewById(R.id.job_type);
+        workMode = view.findViewById(R.id.work_mode);
+        level = view.findViewById(R.id.job_level);
+        salary = view.findViewById(R.id.job_salary);
+
+        deleteJobButton = view.findViewById(R.id.delete_job_button);
+
+        chipGroup = jobType.getParent() instanceof ChipGroup ?
+            (ChipGroup) jobType.getParent() : null;
+
         setupClickListeners();
-        viewModel.loadApplication(applicationId);
+        setupObservers();
+        loadData();
     }
 
     private void setupObservers() {
@@ -100,71 +105,60 @@ public class EmployerSingleJobFragment extends Fragment {
         viewModel.getError().observe(getViewLifecycleOwner(), error -> {
             if (error != null) showError(error);
         });
-        viewModel.getApplication().observe(getViewLifecycleOwner(), this::updateUI);
-        viewModel.getCandidate().observe(getViewLifecycleOwner(), this::updateCandidateUI);
+        viewModel.getJob().observe(getViewLifecycleOwner(), this::updateUI);
     }
 
     private void setupClickListeners() {
-        messageButton.setOnClickListener(v -> {
-            Candidate candidate = viewModel.getCandidate().getValue();
-            if (candidate != null) {
-                viewModel.createChat(
-                    viewModel.getApplication().getValue().getEmployerId(),
-                    candidate.getId(),
-                    chatId -> {
-                        // TODO: Navigate to chat screen with chatId
+        deleteJobButton.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Delete Job")
+                .setMessage("Are you sure you want to delete this job?")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    if (jobId != null) {
+                        viewModel.deleteJob(jobId);
                     }
-                );
-            }
+                })
+                .show();
         });
-        
-        interviewButton.setOnClickListener(v -> showStatusConfirmationDialog("INTERVIEW"));
-        rejectButton.setOnClickListener(v -> showStatusConfirmationDialog("REJECTED"));
     }
 
-    private void showStatusConfirmationDialog(String newStatus) {
-        new MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Confirm")
-            .setMessage("Are you sure you want to change application status to " + newStatus + "?")
-            .setPositiveButton("Yes", (dialog, which) -> 
-                viewModel.updateApplicationStatus(applicationId, newStatus))
-            .setNegativeButton("No", null)
-            .show();
+    private void loadData() {
+        if (jobId != null) {
+            viewModel.loadJob(jobId);
+        } else {
+            showError("Job ID not found");
+        }
     }
 
-    private void updateUI(Application application) {
-        jobTitle.setText(application.getJobTitle());
-        companyName.setText(application.getCandidateId());
-        appliedDate.setText("Applied: " + new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(application.getAppliedAt()));
-        jobDescription.setText(application.getJobTitle());
-        applicationStatus.setText(application.getStatus().getValue());
+    private void updateUI(Job job) {
+        if (job == null) {
+            showError("Job not found");
+            return;
+        }
+
+        jobTitle.setText(job.getTitle());
+        companyName.setText(job.getCompanyName());
+        createdDate.setText("Created: " + formatDate(job.getCreatedAt()));
+        jobDescription.setText(job.getDescription());
+        salary.setText(job.getSalary());
+
+        // Update chips
+        jobType.setText(job.getType().getValue());
+        workMode.setText(job.getWorkMode().getValue());
+        level.setText(job.getLevel());
+
+        // Setup lists
+        setupList(requirementsList, job.getRequirements());
+        setupList(benefitsList, job.getBenefits());
+        setupList(responsibilitiesList, job.getResponsibilities());
+        showContent();
     }
 
-    private void updateCandidateUI(Candidate candidate) {
-        candidateName.setText(candidate.getFullName());
-        CandidateProfile profile = candidate.getProfile();
-        // Update education
-        for (CandidateEducation edu : profile.getEducation()) {
-            TextView view = new TextView(requireContext());
-            view.setText(String.format("%s - %s\n%s", 
-                edu.getInstitution(), edu.getDegree(), edu.getEndDate()));
-            educationContainer.addView(view);
-        }
-        
-        // Update experience
-        for (CandidateExperience exp : profile.getExperience()) {
-            TextView view = new TextView(requireContext());
-            view.setText(String.format("%s at %s (%s - %s)", 
-                exp.getTitle(), exp.getCompany(), exp.getStartDate(), exp.getEndDate()));
-            experienceContainer.addView(view);
-        }
-        
-        // Update skills
-        for (String skill : profile.getSkills()) {
-            Chip chip = new Chip(requireContext());
-            chip.setText(skill);
-            skillsGroup.addView(chip);
-        }
+    private void showContent() {
+        loadingProgress.setVisibility(View.GONE);
+        errorText.setVisibility(View.GONE);
+        contentContainer.setVisibility(View.VISIBLE);
     }
     
     private void showLoading(boolean show) {
@@ -178,5 +172,19 @@ public class EmployerSingleJobFragment extends Fragment {
         contentContainer.setVisibility(View.GONE);
         errorText.setVisibility(View.VISIBLE);
         errorText.setText(message);
+    }
+
+    private void setupList(LinearLayout container, java.util.List<String> items) {
+        for (String item : items) {
+            TextView textView = new TextView(requireContext());
+            textView.setText(String.format("• %s", item));
+            textView.setPadding(0, 4, 0, 4);
+            container.addView(textView);
+        }
+    }
+
+    private String formatDate(java.util.Date date) {
+        if (date == null) return "";
+        return new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date);
     }
 }
