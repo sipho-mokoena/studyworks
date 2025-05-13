@@ -47,6 +47,11 @@ public class ApplicationsRepository {
 
     public LiveData<Application> getApplication(String applicationId) {
         MutableLiveData<Application> applicationLiveData = new MutableLiveData<>();
+        
+        if (applicationId == null) {
+            applicationLiveData.setValue(null);
+            return applicationLiveData;
+        }
 
         db.collection(APPLICATIONS_COLLECTION)
             .document(applicationId)
@@ -167,7 +172,7 @@ public class ApplicationsRepository {
         int progress = calculateProgress(status);
         db.collection(APPLICATIONS_COLLECTION)
             .document(applicationId)
-            .update("status", status.toString(), "progress", progress);
+            .update("status", status.getValue(), "progress", progress);
     }
 
     public void deleteApplication(String applicationId) {
