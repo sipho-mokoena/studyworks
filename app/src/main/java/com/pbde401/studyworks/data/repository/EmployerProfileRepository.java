@@ -49,4 +49,16 @@ public class EmployerProfileRepository {
                 return new EmployerProfile("");
             });
     }
+
+    public Task<Void> saveEmployerProfile(String userId, EmployerProfile profile) {
+        return db.collection(USERS_COLLECTION)
+            .document(userId)
+            .update("profile", profile)
+            .continueWith(task -> {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                return null;
+            });
+    }
 }

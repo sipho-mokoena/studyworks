@@ -57,10 +57,6 @@ public class EmployerProfileFragment extends Fragment {
         saveButton = rootView.findViewById(R.id.save_button);
         closeButton = rootView.findViewById(R.id.close_button);
 
-        // Load current employer (assumed via a helper method)
-        employer = viewModel.getCurrentEmployer();
-        updateUIFromEmployer();
-
         // Set editing controls
         editButton.setOnClickListener(v -> setEditing(true));
         saveButton.setOnClickListener(v -> updateProfile());
@@ -69,16 +65,43 @@ public class EmployerProfileFragment extends Fragment {
             updateUIFromEmployer(); // revert unsaved changes
         });
 
+        setupObservers();
+        
+        // Load initial data
+        viewModel.loadCurrentUserProfile();
+
         return rootView;
+    }
+
+    private void setupObservers() {
+        viewModel.getEmployerData().observe(getViewLifecycleOwner(), employer -> {
+            if (employer != null) {
+                this.employer = employer;
+                updateUIFromEmployer();
+            }
+        });
+
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> 
+            loadingIndicator.setVisibility(isLoading ? View.VISIBLE : View.GONE));
+
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                showError(error);
+            } else {
+                errorAlert.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void setEditing(boolean editing) {
         isEditing = editing;
+        // Disable email editing since it requires auth change
+        emailEditText.setEnabled(false); 
         fullNameEditText.setEnabled(editing);
-        emailEditText.setEnabled(editing);
         companyNameEditText.setEnabled(editing);
         companyDescriptionEditText.setEnabled(editing);
         websiteEditText.setEnabled(editing);
+        
         editButton.setVisibility(editing ? View.GONE : View.VISIBLE);
         saveButton.setVisibility(editing ? View.VISIBLE : View.GONE);
         closeButton.setVisibility(editing ? View.VISIBLE : View.GONE);
@@ -107,47 +130,31 @@ public class EmployerProfileFragment extends Fragment {
         String companyDescription = companyDescriptionEditText.getText().toString().trim();
         String website = websiteEditText.getText().toString().trim();
 
+        if (!validateFields(fullName, email, companyName)) {
+            return;
+        }
+
+        // Create updated profile
+        EmployerProfile updatedProfile = new EmployerProfile(companyName, companyDescription, website);
+        
+        // Save changes through ViewModel
+        viewModel.saveProfile(updatedProfile);
+    }
+
+    private boolean validateFields(String fullName, String email, String companyName) {
         if (fullName.isEmpty()) {
             showError("Full name is required");
-            return;
+            return false;
         }
         if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             showError("Valid email is required");
-            return;
+            return false;
         }
         if (companyName.isEmpty()) {
             showError("Company name is required");
-            return;
+            return false;
         }
-
-        loadingIndicator.setVisibility(View.VISIBLE);
-        errorAlert.setVisibility(View.GONE);
-
-        // Update employer fields with new values
-        employer.setFullName(fullName);
-        employer.setEmail(email);
-        if (employer.getProfile() == null) {
-            // Assuming EmployerProfile has a constructor with (String companyName, String companyDescription, String website)
-            employer.setProfile(new EmployerProfile(companyName, companyDescription, website));
-        } else {
-            employer.getProfile().setCompanyName(companyName);
-            employer.getProfile().setCompanyDescription(companyDescription);
-            employer.getProfile().setWebsite(website);
-        }
-
-        // Simulate asynchronous update (e.g., network/database call)
-        new Thread(() -> {
-            try {
-                Thread.sleep(1500);  // Simulate update delay
-            } catch (InterruptedException e) {
-                // Handle interruption if needed
-            }
-            requireActivity().runOnUiThread(() -> {
-                loadingIndicator.setVisibility(View.GONE);
-                setEditing(false);
-                updateUIFromEmployer();
-            });
-        }).start();
+        return true;
     }
 
     private void showError(String message) {
