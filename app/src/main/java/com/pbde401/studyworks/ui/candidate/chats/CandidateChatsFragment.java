@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,10 +13,10 @@ import com.pbde401.studyworks.R;
 import com.pbde401.studyworks.data.models.Chat;
 import com.pbde401.studyworks.util.AuthManager;
 
-public class CandidateChatsFragment extends Fragment implements ChatListAdapter.OnChatClickListener {
+public class CandidateChatsFragment extends Fragment implements CandidateChatListAdapter.OnChatClickListener {
     private CandidateChatsViewModel viewModel;
     private AuthManager authManager;
-    private ChatListAdapter adapter;
+    private CandidateChatListAdapter adapter;
     private RecyclerView rvChats;
 
     public CandidateChatsFragment() {
@@ -48,7 +47,7 @@ public class CandidateChatsFragment extends Fragment implements ChatListAdapter.
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
         rvChats.setLayoutManager(layoutManager);
         
-        adapter = new ChatListAdapter(this);
+        adapter = new CandidateChatListAdapter(this);
         rvChats.setAdapter(adapter);
 
         viewModel.getChats().observe(getViewLifecycleOwner(), chats -> {

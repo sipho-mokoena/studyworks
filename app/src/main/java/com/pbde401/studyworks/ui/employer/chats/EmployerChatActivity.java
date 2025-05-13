@@ -17,8 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.pbde401.studyworks.R;
 
 public class EmployerChatActivity extends AppCompatActivity {
-    private ChatViewModel viewModel;
-    private MessagesAdapter adapter;
+    private EmployerChatActivityViewModel viewModel;
+    private EmployerChatMessagesAdapter adapter;
     private EditText messageInput;
     private RecyclerView messagesRecyclerView;
 
@@ -42,11 +42,11 @@ public class EmployerChatActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         messagesRecyclerView.setLayoutManager(layoutManager);
-        adapter = new MessagesAdapter();
+        adapter = new EmployerChatMessagesAdapter();
         messagesRecyclerView.setAdapter(adapter);
 
         // Initialize ViewModel
-        viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
+        viewModel = new ViewModelProvider(this).get(EmployerChatActivityViewModel.class);
 
         // Get chat ID from intent
         String chatId = getIntent().getStringExtra("chatId");

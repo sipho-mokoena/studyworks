@@ -11,10 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.pbde401.studyworks.R;
 import com.pbde401.studyworks.data.models.Chat;
+import com.pbde401.studyworks.ui.common.BaseChatListAdapter;
 import com.pbde401.studyworks.ui.employer.chats.EmployerChatListAdapter;
 import com.pbde401.studyworks.util.AuthManager;
 
-public class EmployerChatsFragment extends Fragment implements EmployerChatListAdapter.OnEmployerChatClickListener {
+public class EmployerChatsFragment extends Fragment implements BaseChatListAdapter.OnChatClickListener {
     private EmployerChatsViewModel viewModel;
     private AuthManager authManager;
     private EmployerChatListAdapter adapter;
