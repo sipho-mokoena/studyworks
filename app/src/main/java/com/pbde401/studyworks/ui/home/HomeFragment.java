@@ -52,10 +52,10 @@ public class HomeFragment extends Fragment {
     }
 
     private FeatureData[] features = {
-        new FeatureData("For Students", 
-            "Access exclusive opportunities tailored for students and recent graduates"),
+        new FeatureData("For Candidates", 
+            "Access exclusive opportunities tailored for candidates and recent graduates"),
         new FeatureData("For Employers",
-            "Connect with talented students and graduates for your organization"),
+            "Connect with talented candidates and graduates for your organization"),
         new FeatureData("Direct Communication",
             "Seamless communication between candidates and employers")
     };
