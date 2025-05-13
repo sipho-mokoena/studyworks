@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 public class EmployerSingleJobFragment extends Fragment {
     private String applicationId;
@@ -46,7 +47,7 @@ public class EmployerSingleJobFragment extends Fragment {
     
     private TextView jobTitle, companyName, createdDate, jobDescription, salary;
     private Chip jobType, workMode, level;
-    private MaterialButton deleteJobButton;
+    private MaterialButton editJobButton, deleteJobButton;
     private LinearLayout requirementsList, responsibilitiesList, benefitsList;
     private ChipGroup chipGroup;
 
@@ -90,6 +91,7 @@ public class EmployerSingleJobFragment extends Fragment {
         level = view.findViewById(R.id.job_level);
         salary = view.findViewById(R.id.job_salary);
 
+        editJobButton = view.findViewById(R.id.edit_job_button);
         deleteJobButton = view.findViewById(R.id.delete_job_button);
 
         chipGroup = jobType.getParent() instanceof ChipGroup ?
@@ -120,6 +122,13 @@ public class EmployerSingleJobFragment extends Fragment {
                     }
                 })
                 .show();
+        });
+
+        editJobButton.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("jobId", jobId);
+            Navigation.findNavController(requireView())
+                .navigate(R.id.action_navigation_employer_single_job_to_navigation_employer_create_edit_job, bundle);
         });
     }
 
