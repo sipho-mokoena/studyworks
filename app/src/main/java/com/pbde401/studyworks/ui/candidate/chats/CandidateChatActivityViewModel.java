@@ -11,13 +11,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class ChatViewModel extends ViewModel {
+public class CandidateChatActivityViewModel extends ViewModel {
     private final ChatsRepository chatsRepository;
     private final AuthManager authManager;
     private final MutableLiveData<List<Message>> messages = new MutableLiveData<>();
     private String currentChatId;
 
-    public ChatViewModel() {
+    public CandidateChatActivityViewModel() {
         this.chatsRepository = new ChatsRepository();
         this.authManager = AuthManager.getInstance();
     }

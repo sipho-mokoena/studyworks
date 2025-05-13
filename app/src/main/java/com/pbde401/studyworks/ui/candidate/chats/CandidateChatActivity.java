@@ -12,8 +12,8 @@ import com.google.android.material.button.MaterialButton;
 import com.pbde401.studyworks.R;
 
 public class CandidateChatActivity extends AppCompatActivity {
-    private ChatViewModel viewModel;
-    private MessagesAdapter adapter;
+    private CandidateChatActivityViewModel viewModel;
+    private CandidateChatMessagesAdapter adapter;
     private EditText messageInput;
     private RecyclerView messagesRecyclerView;
 
@@ -37,11 +37,11 @@ public class CandidateChatActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         messagesRecyclerView.setLayoutManager(layoutManager);
-        adapter = new MessagesAdapter();
+        adapter = new CandidateChatMessagesAdapter();
         messagesRecyclerView.setAdapter(adapter);
 
         // Initialize ViewModel
-        viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
+        viewModel = new ViewModelProvider(this).get(CandidateChatActivityViewModel.class);
 
         // Get chat ID from intent
         String chatId = getIntent().getStringExtra("chatId");

@@ -1,4 +1,4 @@
-package com.pbde401.studyworks.ui.candidate.chats;
+package com.pbde401.studyworks.ui.common;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,13 +13,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
 
-public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
-    private List<Message> messages = new ArrayList<>();
-    private final String currentUserId;
-    private static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+public abstract class BaseChatMessagesAdapter extends RecyclerView.Adapter<BaseChatMessagesAdapter.MessageViewHolder> {
+    protected List<Message> messages = new ArrayList<>();
+    protected final String currentUserId;
+    protected static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
-    public MessagesAdapter() {
+    public BaseChatMessagesAdapter() {
         this.currentUserId = AuthManager.getInstance().getCurrentUser().getValue().getUid();
     }
 
@@ -54,11 +55,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         notifyDataSetChanged();
     }
 
-    static class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageText;
-        TextView timeText;
+    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+        public TextView messageText;
+        public TextView timeText;
 
-        MessageViewHolder(View itemView) {
+        public MessageViewHolder(View itemView) {
             super(itemView);
             messageText = itemView.findViewById(R.id.messageText);
             timeText = itemView.findViewById(R.id.timeText);
