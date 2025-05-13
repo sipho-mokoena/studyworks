@@ -39,7 +39,7 @@ public class EmployerProfileViewModel extends ViewModel {
     public void loadProfile(String userId) {
         isLoading.setValue(true);
         error.setValue(null);
-        userRepository.getUserById(userId)
+        userRepository.getUserByUid(userId)
             .addOnSuccessListener(user -> {
                 if (user instanceof Employer) {
                     employerData.setValue((Employer) user);
@@ -73,15 +73,20 @@ public class EmployerProfileViewModel extends ViewModel {
             error.setValue("No user data available");
             return;
         }
+        
+        if (updatedProfile.getCompanyName().trim().isEmpty()) {
+            error.setValue("Company name is required");
+            return;
+        }
+
         isLoading.setValue(true);
         error.setValue(null);
-        Employer employer = employerData.getValue();
-        employer.setProfile(updatedProfile);
         
-        userRepository.setEmployerProfile(employer)
-            .addOnSuccessListener(updatedEmployer -> {
-                employerData.setValue(updatedEmployer);
-                profileData.setValue(updatedProfile);
+        profileRepository.saveEmployerProfile(employerData.getValue().getId(), updatedProfile)
+            .addOnSuccessListener(aVoid -> {
+                Employer employer = employerData.getValue();
+                employer.setProfile(updatedProfile);
+                employerData.setValue(employer);
                 isLoading.setValue(false);
             })
             .addOnFailureListener(e -> {
