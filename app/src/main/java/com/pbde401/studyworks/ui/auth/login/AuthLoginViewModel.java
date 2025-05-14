@@ -38,9 +38,6 @@ public class AuthLoginViewModel extends ViewModel {
                 .addOnFailureListener(e -> {
                     isLoading.setValue(false);
                     error.setValue("Login failed: " + e.getMessage());
-                })
-                .addOnCompleteListener(task -> {
-                    isLoading.setValue(false);
                 });
     }
 }

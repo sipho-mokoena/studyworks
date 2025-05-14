@@ -73,9 +73,9 @@ public class UserRepository {
         userData.put("uid", user.getUid());
         userData.put("fullName", user.getFullName());
         userData.put("email", user.getEmail());
-        userData.put("role", user.getRole().toString());
-        userData.put("createdAt", user.getCreatedAt());
-        userData.put("updatedAt", user.getUpdatedAt());
+        userData.put("role", user.getRole().getRoleString());
+        userData.put("createdAt", dateToIso8601(user.getCreatedAt()));
+        userData.put("updatedAt", dateToIso8601(user.getUpdatedAt()));
         
         return db.collection(USERS_COLLECTION)
                 .document(user.getId())
@@ -214,6 +214,13 @@ public class UserRepository {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String dateToIso8601(Date date) {
+        if (date == null) return null;
+        SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return iso8601Format.format(date);
     }
     
     public Task<Void> updateUserProfile(String userId, Map<String, Object> updates) {
