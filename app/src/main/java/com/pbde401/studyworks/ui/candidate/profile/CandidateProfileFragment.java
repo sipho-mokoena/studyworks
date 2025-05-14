@@ -20,6 +20,7 @@ import com.pbde401.studyworks.data.models.Candidate;
 import com.pbde401.studyworks.data.models.CandidateEducation;
 import com.pbde401.studyworks.data.models.CandidateExperience;
 import com.pbde401.studyworks.data.models.CandidateProfile;
+import com.pbde401.studyworks.utils.DateUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,6 +62,7 @@ public class CandidateProfileFragment extends Fragment {
     private void initializeViews(View view) {
         loadingIndicator = view.findViewById(R.id.loading_indicator);
         profileContainer = view.findViewById(R.id.profile_container);
+        errorText = view.findViewById(R.id.error_text);
         
         fullNameInput = view.findViewById(R.id.full_name);
         emailInput = view.findViewById(R.id.email);
@@ -98,14 +100,14 @@ public class CandidateProfileFragment extends Fragment {
             loadingIndicator.setVisibility(isLoading ? View.VISIBLE : View.GONE);
             profileContainer.setVisibility(isLoading ? View.GONE : View.VISIBLE);
         });
-//        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
-//            if (error != null && !error.isEmpty()) {
-//                errorText.setVisibility(View.VISIBLE);
-//                ((TextView) errorText).setText(error);
-//            } else {
-//                errorText.setVisibility(View.GONE);
-//            }
-//        });
+        viewModel.getError().observe(getViewLifecycleOwner(), error -> {
+            if (error != null && !error.isEmpty()) {
+                errorText.setVisibility(View.VISIBLE);
+                ((TextView) errorText).setText(error);
+            } else {
+                errorText.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void loadProfile() {
@@ -293,20 +295,17 @@ public class CandidateProfileFragment extends Fragment {
     }
 
     private String formatDate(Date date) {
-        if (date == null) return "";
-        return new SimpleDateFormat("MMM yyyy", Locale.getDefault()).format(date);
+        return DateUtils.formatForUi(date);
     }
 
     private Date parseDate(String dateStr) {
-        if (dateStr == null || dateStr.isEmpty()) return null;
-        try {
-            return new SimpleDateFormat("MMM yyyy", Locale.getDefault()).parse(dateStr);
-        } catch (Exception e) {
-            return null;
-        }
+        return DateUtils.parseUiDate(dateStr);
     }
 
     private void saveProfile() {
+        // Get updated full name
+        String fullName = fullNameInput.getText().toString().trim();
+        
         // Collect skills
         List<String> skills = new ArrayList<>();
         for (int i = 0; i < skillsChipGroup.getChildCount(); i++) {
@@ -362,7 +361,8 @@ public class CandidateProfileFragment extends Fragment {
             experienceList,
             skills
         );
-
-        viewModel.saveProfile(updatedProfile);
+        
+        // Also update the candidate's full name if needed
+        viewModel.saveProfile(updatedProfile, fullName);
     }
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.google.firebase.firestore.QuerySnapshot;
 import android.util.Log;
+import com.pbde401.studyworks.utils.DateUtils;
 
 public class UserRepository {
 
@@ -74,8 +75,8 @@ public class UserRepository {
         userData.put("fullName", user.getFullName());
         userData.put("email", user.getEmail());
         userData.put("role", user.getRole().getRoleString());
-        userData.put("createdAt", dateToIso8601(user.getCreatedAt()));
-        userData.put("updatedAt", dateToIso8601(user.getUpdatedAt()));
+        userData.put("createdAt", DateUtils.formatToIso8601(user.getCreatedAt()));
+        userData.put("updatedAt", DateUtils.formatToIso8601(user.getUpdatedAt()));
         
         return db.collection(USERS_COLLECTION)
                 .document(user.getId())
@@ -205,22 +206,11 @@ public class UserRepository {
     }
 
     private Date parseDate(String dateString) {
-        if (dateString == null) return null;
-        try {
-            SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-            iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            return iso8601Format.parse(dateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return DateUtils.parseIsoDate(dateString);
     }
 
     private String dateToIso8601(Date date) {
-        if (date == null) return null;
-        SimpleDateFormat iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-        iso8601Format.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return iso8601Format.format(date);
+        return DateUtils.formatToIso8601(date);
     }
     
     public Task<Void> updateUserProfile(String userId, Map<String, Object> updates) {
@@ -349,8 +339,9 @@ public class UserRepository {
         }
 
         Map<String, Object> updates = new HashMap<>();
-        updates.put("profile", candidate.getProfile());
-        updates.put("updatedAt", new Date());
+        updates.put("profile", candidate.getProfile().toMap());
+        updates.put("fullName", candidate.getFullName());
+        updates.put("updatedAt", DateUtils.formatToIso8601(new Date()));
 
         return db.collection(USERS_COLLECTION)
                 .document(candidate.getId())
@@ -371,7 +362,7 @@ public class UserRepository {
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("profile", employer.getProfile());
-        updates.put("updatedAt", new Date());
+        updates.put("updatedAt", DateUtils.formatToIso8601(new Date()));
 
         return db.collection(USERS_COLLECTION)
                 .document(employer.getId())

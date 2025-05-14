@@ -56,8 +56,8 @@ public class CandidateProfileRepository {
     
     private List<CandidateEducation> parseEducation(Map<String, Object> profileData) {
         List<CandidateEducation> educationList = new ArrayList<>();
-        if (profileData.get("candidateEducation") instanceof List) {
-            List<Map<String, Object>> educationData = (List<Map<String, Object>>) profileData.get("candidateEducation");
+        if (profileData.get("education") instanceof List) {
+            List<Map<String, Object>> educationData = (List<Map<String, Object>>) profileData.get("education");
             for (Map<String, Object> edu : educationData) {
                 String degree = (String) edu.get("degree");
                 String institution = (String) edu.get("institution");
@@ -83,8 +83,8 @@ public class CandidateProfileRepository {
     
     private List<CandidateExperience> parseExperience(Map<String, Object> profileData) {
         List<CandidateExperience> experienceList = new ArrayList<>();
-        if (profileData.get("candidateExperience") instanceof List) {
-            List<Map<String, Object>> experienceData = (List<Map<String, Object>>) profileData.get("candidateExperience");
+        if (profileData.get("experience") instanceof List) {
+            List<Map<String, Object>> experienceData = (List<Map<String, Object>>) profileData.get("experience");
             for (Map<String, Object> exp : experienceData) {
                 String title = (String) exp.get("title");
                 String company = (String) exp.get("company");

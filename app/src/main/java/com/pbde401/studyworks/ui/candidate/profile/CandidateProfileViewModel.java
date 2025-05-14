@@ -70,6 +70,10 @@ public class CandidateProfileViewModel extends ViewModel {
     }
 
     public void saveProfile(CandidateProfile updatedProfile) {
+        saveProfile(updatedProfile, null);
+    }
+
+    public void saveProfile(CandidateProfile updatedProfile, String newFullName) {
         if (candidateData.getValue() == null) {
             error.setValue("No user data available");
             return;
@@ -79,11 +83,16 @@ public class CandidateProfileViewModel extends ViewModel {
         error.setValue(null);
         
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        userRepository.getUserById(userId)
+        userRepository.getUserByUid(userId)
             .addOnSuccessListener(user -> {
                 if (user instanceof Candidate) {
                     Candidate candidate = (Candidate) user;
                     candidate.setProfile(updatedProfile);
+                    
+                    // Update full name if provided
+                    if (newFullName != null && !newFullName.isEmpty()) {
+                        candidate.setFullName(newFullName);
+                    }
                     
                     userRepository.setCandidateProfile(candidate)
                         .addOnSuccessListener(updatedCandidate -> {

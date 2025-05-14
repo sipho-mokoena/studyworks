@@ -1,7 +1,9 @@
 package com.pbde401.studyworks.data.models;
 
 import androidx.annotation.NonNull;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CandidateProfile {
     @NonNull
@@ -9,19 +11,19 @@ public class CandidateProfile {
     @NonNull
     private String location;
     @NonNull
-    private List<CandidateEducation> candidateEducation;
+    private List<CandidateEducation> education;  // Renamed from candidateEducation
     @NonNull
-    private List<CandidateExperience> candidateExperience;
+    private List<CandidateExperience> experience;  // Renamed from candidateExperience
     @NonNull
     private List<String> skills;
 
     public CandidateProfile(@NonNull String phone, @NonNull String location,
-                            @NonNull List<CandidateEducation> candidateEducation, @NonNull List<CandidateExperience> candidateExperience,
+                            @NonNull List<CandidateEducation> education, @NonNull List<CandidateExperience> experience,
                             @NonNull List<String> skills) {
         this.phone = phone;
         this.location = location;
-        this.candidateEducation = candidateEducation;
-        this.candidateExperience = candidateExperience;
+        this.education = education;
+        this.experience = experience;
         this.skills = skills;
     }
 
@@ -45,20 +47,20 @@ public class CandidateProfile {
 
     @NonNull
     public List<CandidateEducation> getEducation() {
-        return candidateEducation;
+        return education;
     }
 
-    public void setEducation(@NonNull List<CandidateEducation> candidateEducation) {
-        this.candidateEducation = candidateEducation;
+    public void setEducation(@NonNull List<CandidateEducation> education) {
+        this.education = education;
     }
 
     @NonNull
     public List<CandidateExperience> getExperience() {
-        return candidateExperience;
+        return experience;
     }
 
-    public void setExperience(@NonNull List<CandidateExperience> candidateExperience) {
-        this.candidateExperience = candidateExperience;
+    public void setExperience(@NonNull List<CandidateExperience> experience) {
+        this.experience = experience;
     }
 
     @NonNull
@@ -68,5 +70,16 @@ public class CandidateProfile {
 
     public void setSkills(@NonNull List<String> skills) {
         this.skills = skills;
+    }
+    
+    // Add this method to convert profile to a Map for Firestore
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("phone", phone);
+        map.put("location", location);
+        map.put("education", education);
+        map.put("experience", experience);
+        map.put("skills", skills);
+        return map;
     }
 }
