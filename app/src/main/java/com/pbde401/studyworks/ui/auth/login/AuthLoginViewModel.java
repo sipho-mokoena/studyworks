@@ -35,6 +35,9 @@ public class AuthLoginViewModel extends ViewModel {
         error.setValue(null);
         
         authManager.login(email, password)
+                .addOnSuccessListener(authResult -> {
+                    isLoading.setValue(false);
+                })
                 .addOnFailureListener(e -> {
                     isLoading.setValue(false);
                     error.setValue("Login failed: " + e.getMessage());

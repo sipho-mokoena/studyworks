@@ -65,6 +65,7 @@ public class AuthLoginFragment extends Fragment {
             if (errorMessage != null && !errorMessage.isEmpty()) {
                 Snackbar.make(view, errorMessage, Snackbar.LENGTH_LONG)
                         .setBackgroundTint(ContextCompat.getColor(requireContext(), R.color.error))
+                        .setTextColor(getResources().getColor(R.color.background))
                         .show();
             }
         });
