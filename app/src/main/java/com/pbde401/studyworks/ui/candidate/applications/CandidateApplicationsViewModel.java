@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CandidateApplicationsViewModel extends ViewModel {
     private final ApplicationsRepository applicationsRepository;
@@ -30,6 +31,10 @@ public class CandidateApplicationsViewModel extends ViewModel {
         loadApplicationsAndJobs();
     }
 
+    public void refresh() {
+        loadApplicationsAndJobs();
+    }
+
     private void loadApplicationsAndJobs() {
         loading.setValue(true);
         error.setValue(null);
@@ -37,7 +42,13 @@ public class CandidateApplicationsViewModel extends ViewModel {
         applicationsRepository.getCandidateApplications().observeForever(applicationList -> {
             if (applicationList != null) {
                 applications.setValue(applicationList);
-                loadJobsForApplications(applicationList);
+                
+                if (applicationList.isEmpty()) {
+                    // If there are no applications, we're done loading
+                    loading.setValue(false);
+                } else {
+                    loadJobsForApplications(applicationList);
+                }
             } else {
                 error.setValue("Failed to load applications");
                 loading.setValue(false);
@@ -48,7 +59,7 @@ public class CandidateApplicationsViewModel extends ViewModel {
     private void loadJobsForApplications(@NonNull List<Application> applicationList) {
         Map<String, List<Job>> jobsMap = new HashMap<>();
         int totalApplications = applicationList.size();
-        final int[] loadedJobs = {0};
+        AtomicInteger loadedJobs = new AtomicInteger(0);
 
         for (Application application : applicationList) {
             String jobId = application.getJobId();
@@ -60,10 +71,14 @@ public class CandidateApplicationsViewModel extends ViewModel {
                         jobsMap.put(application.getId(), jobs);
                     }
                     jobs.add(job);
+                } else {
+                    // Handle case where job couldn't be loaded
+                    String errorMsg = error.getValue();
+                    String newError = "Failed to load job details for application: " + application.getId();
+                    error.setValue(errorMsg == null ? newError : errorMsg + "\n" + newError);
                 }
 
-                loadedJobs[0]++;
-                if (loadedJobs[0] == totalApplications) {
+                if (loadedJobs.incrementAndGet() == totalApplications) {
                     applicationsJobs.setValue(jobsMap);
                     loading.setValue(false);
                 }
