@@ -80,4 +80,13 @@
     <color name="status_submitted">#2196F3</color>    <!-- Blue -->
     <color name="status_rejected">#F44336</color>     <!-- Red -->
     <color name="status_under_review">#FF9800</color> <!-- Orange -->
+    <!-- Application status colors -->
+    <color name="colorPending">#FFF9C4</color>
+    <color name="colorOnPending">#795548</color>
+    <color name="colorInterview">#BBDEFB</color>
+    <color name="colorOnInterview">#0D47A1</color>
+    <color name="colorAccepted">#C8E6C9</color>
+    <color name="colorOnAccepted">#1B5E20</color>
+    <color name="colorRejected">#FFCDD2</color>
+    <color name="colorOnRejected">#B71C1C</color>
 </resources>

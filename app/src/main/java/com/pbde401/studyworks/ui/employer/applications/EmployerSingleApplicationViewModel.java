@@ -14,70 +14,115 @@ import com.pbde401.studyworks.data.repository.ApplicationsRepository;
 import com.pbde401.studyworks.data.repository.JobsRepository;
 import com.pbde401.studyworks.data.repository.UserRepository;
 import com.pbde401.studyworks.data.repository.ChatsRepository;
+import com.pbde401.studyworks.util.AuthManager;
 
 public class EmployerSingleApplicationViewModel extends ViewModel {
     private final ApplicationsRepository repository;
     private final JobsRepository jobsRepository;
     private final UserRepository userRepository;
     private final ChatsRepository chatsRepository;
+    private final AuthManager authManager;
 
-    public Job job;
-    public Application application;
-    public Candidate candidate;
+    // Objects to store loaded data
+    private MutableLiveData<Application> applicationLiveData = new MutableLiveData<>();
+    private MutableLiveData<Job> jobLiveData = new MutableLiveData<>();
+    private MutableLiveData<Candidate> candidateLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+    private MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>(false);
+    private MutableLiveData<Boolean> actionSuccessLiveData = new MutableLiveData<>();
 
     public EmployerSingleApplicationViewModel() {
         repository = new ApplicationsRepository();
         jobsRepository = new JobsRepository();
         userRepository = new UserRepository();
         chatsRepository = new ChatsRepository();
+        authManager = AuthManager.getInstance();
     }
 
     public LiveData<Application> getApplication(String applicationId) {
         if (applicationId == null) {
-            return new MutableLiveData<>(null);
+            errorLiveData.setValue("Invalid application ID");
+            return applicationLiveData;
         }
-        return repository.getApplication(applicationId);
-    }
-
-    public void setApplication(Application application) {
-        this.application = application;
-    }
-
-    public LiveData<Job> getJob(String jobId) {
-        if (jobId == null) {
-            return new MutableLiveData<>(null);
-        }
-        return jobsRepository.getJob(jobId);
-    }
-
-    public void setJob(Job job) {
-        this.job = job;
-    }
-
-    public LiveData<User> getCandidateUser(String candidateId) {
-        MutableLiveData<User> candidateUser = new MutableLiveData<>();
         
-        if (candidateId == null) {
-            candidateUser.setValue(null);
-            return candidateUser;
-        }
-
-        userRepository.getUserById(candidateId).addOnSuccessListener(user -> {
-            candidateUser.setValue(user);
-        }).addOnFailureListener(e -> {
-            candidateUser.setValue(null);
+        loadingLiveData.setValue(true);
+        repository.getApplication(applicationId).observeForever(application -> {
+            applicationLiveData.setValue(application);
+            loadingLiveData.setValue(false);
+            
+            if (application != null) {
+                // Load related job and candidate data
+                loadJobData(application.getJobId());
+                loadCandidateData(application.getCandidateId());
+            } else {
+                errorLiveData.setValue("Application not found");
+            }
         });
-
-        return candidateUser;
+        
+        return applicationLiveData;
     }
 
-    public void setCandidate(Candidate candidate) {
-        this.candidate = candidate;
+    private void loadJobData(String jobId) {
+        if (jobId == null) return;
+        
+        jobsRepository.getJob(jobId).observeForever(job -> {
+            jobLiveData.setValue(job);
+            if (job == null) {
+                errorLiveData.setValue("Job not found");
+            }
+        });
     }
 
+    private void loadCandidateData(String candidateId) {
+        if (candidateId == null) return;
+        
+        userRepository.getUserById(candidateId).addOnSuccessListener(user -> {
+            if (user instanceof Candidate) {
+                candidateLiveData.setValue((Candidate) user);
+            } else {
+                errorLiveData.setValue("Candidate information not available");
+            }
+        }).addOnFailureListener(e -> {
+            errorLiveData.setValue("Failed to load candidate: " + e.getMessage());
+        });
+    }
+
+    public LiveData<Job> getJobData() {
+        return jobLiveData;
+    }
+
+    public LiveData<Candidate> getCandidateData() {
+        return candidateLiveData;
+    }
+
+    public LiveData<String> getError() {
+        return errorLiveData;
+    }
+
+    public LiveData<Boolean> isLoading() {
+        return loadingLiveData;
+    }
+
+    public LiveData<Boolean> getActionSuccess() {
+        return actionSuccessLiveData;
+    }
 
     public void setApplicationStatus(String applicationId, ApplicationStatus status) {
+        if (applicationId == null) {
+            errorLiveData.setValue("Invalid application ID");
+            actionSuccessLiveData.setValue(false);
+            return;
+        }
+        
+        loadingLiveData.setValue(true);
         repository.updateApplicationStatus(applicationId, status);
+        
+        // Refresh application data after update
+        repository.getApplication(applicationId).observeForever(updatedApplication -> {
+            applicationLiveData.setValue(updatedApplication);
+            loadingLiveData.setValue(false);
+            actionSuccessLiveData.setValue(true);
+        });
     }
 
     public void scheduleInterview(String applicationId) {
@@ -89,6 +134,27 @@ public class EmployerSingleApplicationViewModel extends ViewModel {
     }
 
     public LiveData<Chat> findOrCreateChat(String employerId, String candidateId) {
-        return chatsRepository.findOrCreateChat(employerId, candidateId);
+        if (employerId == null || candidateId == null) {
+            MutableLiveData<Chat> errorResult = new MutableLiveData<>(null);
+            errorLiveData.setValue("Invalid user information for chat");
+            return errorResult;
+        }
+        
+        loadingLiveData.setValue(true);
+        LiveData<Chat> chatLiveData = chatsRepository.findOrCreateChat(employerId, candidateId);
+        
+        chatLiveData.observeForever(chat -> {
+            loadingLiveData.setValue(false);
+            if (chat == null) {
+                errorLiveData.setValue("Failed to create chat");
+            }
+        });
+        
+        return chatLiveData;
+    }
+
+    public String getCurrentEmployerId() {
+        User currentUser = authManager.getCurrentUser().getValue();
+        return currentUser != null ? currentUser.getId() : null;
     }
 }
