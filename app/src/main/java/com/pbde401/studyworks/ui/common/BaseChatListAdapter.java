@@ -38,32 +38,26 @@ public abstract class BaseChatListAdapter extends RecyclerView.Adapter<BaseChatL
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        Chat chat = chats.get(position);
-        bindViewHolder(holder, chat);
-    }
-
-    private void bindViewHolder(ChatViewHolder holder, Chat chat) {
-        loadUserData(chat, holder);
+        Chat chat = getChatAt(position);
         
-        String lastMessage = chat.getLastMessage();
-        holder.tvLastMessage.setText(lastMessage != null ? lastMessage : "No messages yet");
-        
-        if (chat.getLastMessageAt() != null) {
-            CharSequence timeAgo = DateUtils.getRelativeTimeSpanString(
-                chat.getLastMessageAt().getTime(),
-                System.currentTimeMillis(),
-                DateUtils.MINUTE_IN_MILLIS
-            );
-            holder.tvLastMessageTime.setText(timeAgo);
+        // Display last message if available
+        if (chat.getLastMessage() != null && !chat.getLastMessage().isEmpty()) {
+            holder.tvLastMessage.setText(chat.getLastMessage());
+            
+            // Format and display timestamp
+            if (chat.getLastMessageAt() != null) {
+                long timeMillis = chat.getLastMessageAt().toDate().getTime(); // Convert Timestamp to Date first
+                holder.tvLastMessageTime.setText(com.pbde401.studyworks.utils.DateUtils.formatTimestamp(timeMillis));
+            } else {
+                holder.tvLastMessageTime.setText("");
+            }
         } else {
+            holder.tvLastMessage.setText("No messages yet");
             holder.tvLastMessageTime.setText("");
         }
-
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onChatClick(chat);
-            }
-        });
+        
+        // Load user data
+        loadUserData(chat, holder);
     }
 
     @Override
@@ -77,6 +71,10 @@ public abstract class BaseChatListAdapter extends RecyclerView.Adapter<BaseChatL
     }
 
     protected abstract void loadUserData(Chat chat, ChatViewHolder holder);
+
+    public Chat getChatAt(int position) {
+        return chats.get(position);
+    }
 
     public static class ChatViewHolder extends RecyclerView.ViewHolder {
         public final TextView tvContactCharacter;

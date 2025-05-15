@@ -43,4 +43,40 @@ public class DateUtils {
         if (date == null) return "";
         return new SimpleDateFormat(UI_DATE_FORMAT, Locale.getDefault()).format(date);
     }
+
+    public static String formatTimestamp(com.google.firebase.Timestamp timestamp) {
+        if (timestamp == null) return "";
+        return formatTimestamp(timestamp.toDate().getTime());
+    }
+
+    public static String formatTimestamp(long timeMillis) {
+        // Logic to format timestamp for chat messages
+        long now = System.currentTimeMillis();
+        long diff = now - timeMillis;
+        
+        // Less than a minute
+        if (diff < 60 * 1000) {
+            return "Just now";
+        }
+        // Less than an hour
+        else if (diff < 60 * 60 * 1000) {
+            int minutes = (int) (diff / (60 * 1000));
+            return minutes + "m ago";
+        }
+        // Less than a day
+        else if (diff < 24 * 60 * 60 * 1000) {
+            int hours = (int) (diff / (60 * 60 * 1000));
+            return hours + "h ago";
+        }
+        // Less than a week
+        else if (diff < 7 * 24 * 60 * 60 * 1000) {
+            int days = (int) (diff / (24 * 60 * 60 * 1000));
+            return days + "d ago";
+        }
+        // Otherwise show date
+        else {
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd", Locale.getDefault());
+            return sdf.format(new Date(timeMillis));
+        }
+    }
 }

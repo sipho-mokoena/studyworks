@@ -11,9 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.pbde401.studyworks.R;
 import com.pbde401.studyworks.data.models.Chat;
+import com.pbde401.studyworks.ui.common.BaseChatListAdapter;
 import com.pbde401.studyworks.util.AuthManager;
 
-public class CandidateChatsFragment extends Fragment implements CandidateChatListAdapter.OnChatClickListener {
+public class CandidateChatsFragment extends Fragment implements BaseChatListAdapter.OnChatClickListener {
     private CandidateChatsViewModel viewModel;
     private AuthManager authManager;
     private CandidateChatListAdapter adapter;
@@ -44,8 +45,7 @@ public class CandidateChatsFragment extends Fragment implements CandidateChatLis
         View view = inflater.inflate(R.layout.fragment_candidate_chats, container, false);
         
         rvChats = view.findViewById(R.id.rvChats);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
-        rvChats.setLayoutManager(layoutManager);
+        rvChats.setLayoutManager(new LinearLayoutManager(requireContext()));
         
         adapter = new CandidateChatListAdapter(this);
         rvChats.setAdapter(adapter);

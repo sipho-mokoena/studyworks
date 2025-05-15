@@ -2,9 +2,15 @@ package com.pbde401.studyworks.data.repository;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.pbde401.studyworks.data.models.Chat;
 import com.pbde401.studyworks.data.models.Message;
 import com.pbde401.studyworks.data.models.enums.UserRole;
@@ -14,14 +20,84 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ChatsRepository {
-    private static final String CHATS_COLLECTION = "chats";
+    private final FirebaseFirestore db;
+    private static final String COLLECTION_PATH = "chats";
     private static final String MESSAGES_COLLECTION = "messages";
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+    public ChatsRepository() {
+        db = FirebaseFirestore.getInstance();
+    }
+
+    public LiveData<List<Chat>> getEmployerChats(String employerId) {
+        MutableLiveData<List<Chat>> chatsLiveData = new MutableLiveData<>();
+
+        db.collection(COLLECTION_PATH)
+            .whereEqualTo("employerId", employerId)
+            .orderBy("lastMessageAt", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                List<Chat> chatsList = new ArrayList<>();
+                for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                    Chat chat = documentToChat(document);
+                    if (chat != null) {
+                        chatsList.add(chat);
+                    }
+                }
+                chatsLiveData.setValue(chatsList);
+            })
+            .addOnFailureListener(e -> {
+                // Handle error
+                chatsLiveData.setValue(new ArrayList<>());
+            });
+
+        return chatsLiveData;
+    }
+
+    public LiveData<List<Chat>> getCandidateChats(String candidateId) {
+        MutableLiveData<List<Chat>> chatsLiveData = new MutableLiveData<>();
+
+        db.collection(COLLECTION_PATH)
+            .whereEqualTo("candidateId", candidateId)
+            .orderBy("lastMessageAt", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                List<Chat> chatsList = new ArrayList<>();
+                for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
+                    Chat chat = documentToChat(document);
+                    if (chat != null) {
+                        chatsList.add(chat);
+                    }
+                }
+                chatsLiveData.setValue(chatsList);
+            })
+            .addOnFailureListener(e -> {
+                // Handle error
+                chatsLiveData.setValue(new ArrayList<>());
+            });
+
+        return chatsLiveData;
+    }
+
+    public Task<Void> createChat(String candidateId, String employerId) {
+        String chatId = db.collection(COLLECTION_PATH).document().getId();
+        Timestamp now = Timestamp.now(); // Use Timestamp.now() instead of new Date()
+
+        Chat newChat = new Chat(chatId, now, now, candidateId, employerId);
+        
+        Map<String, Object> chatData = new HashMap<>();
+        chatData.put("id", newChat.getId());
+        chatData.put("candidateId", newChat.getCandidateId());
+        chatData.put("employerId", newChat.getEmployerId());
+        chatData.put("createdAt", now);
+        chatData.put("updatedAt", now);
+
+        return db.collection(COLLECTION_PATH).document(chatId).set(chatData);
+    }
 
     public LiveData<Chat> createChat(Chat chat) {
         MutableLiveData<Chat> chatLiveData = new MutableLiveData<>();
         
-        db.collection(CHATS_COLLECTION)
+        db.collection(COLLECTION_PATH)
             .document(chat.getId())
             .set(chatToMap(chat))
             .addOnSuccessListener(aVoid -> chatLiveData.setValue(chat))
@@ -33,7 +109,7 @@ public class ChatsRepository {
     public LiveData<Chat> getChat(String chatId) {
         MutableLiveData<Chat> chatLiveData = new MutableLiveData<>();
 
-        db.collection(CHATS_COLLECTION)
+        db.collection(COLLECTION_PATH)
             .document(chatId)
             .get()
             .addOnSuccessListener(document -> {
@@ -51,7 +127,7 @@ public class ChatsRepository {
     public LiveData<Chat> getChatByEmployerIdAndCandidateId(String employerId, String candidateId) {
         MutableLiveData<Chat> chatLiveData = new MutableLiveData<>();
 
-        db.collection(CHATS_COLLECTION)
+        db.collection(COLLECTION_PATH)
             .whereEqualTo("employerId", employerId)
             .whereEqualTo("candidateId", candidateId)
             .get()
@@ -68,45 +144,9 @@ public class ChatsRepository {
     }
 
     public void updateChat(String chatId, Map<String, Object> updates) {
-        db.collection(CHATS_COLLECTION)
+        db.collection(COLLECTION_PATH)
             .document(chatId)
             .update(updates);
-    }
-
-    public LiveData<List<Chat>> getCandidateChats(String candidateId) {
-        MutableLiveData<List<Chat>> chatsLiveData = new MutableLiveData<>();
-
-        db.collection(CHATS_COLLECTION)
-            .whereEqualTo("candidateId", candidateId)
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                List<Chat> chats = new ArrayList<>();
-                for (DocumentSnapshot document : queryDocumentSnapshots) {
-                    chats.add(documentToChat(document));
-                }
-                chatsLiveData.setValue(chats);
-            })
-            .addOnFailureListener(e -> chatsLiveData.setValue(new ArrayList<>()));
-
-        return chatsLiveData;
-    }
-
-    public LiveData<List<Chat>> getEmployerChats(String employerId) {
-        MutableLiveData<List<Chat>> chatsLiveData = new MutableLiveData<>();
-
-        db.collection(CHATS_COLLECTION)
-            .whereEqualTo("employerId", employerId)
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                List<Chat> chats = new ArrayList<>();
-                for (DocumentSnapshot document : queryDocumentSnapshots) {
-                    chats.add(documentToChat(document));
-                }
-                chatsLiveData.setValue(chats);
-            })
-            .addOnFailureListener(e -> chatsLiveData.setValue(new ArrayList<>()));
-
-        return chatsLiveData;
     }
 
     public LiveData<Chat> findOrCreateChat(String employerId, String candidateId) {
@@ -118,7 +158,7 @@ public class ChatsRepository {
                     chatLiveData.setValue(existingChat);
                 } else {
                     // Create new chat
-                    Date now = new Date();
+                    Timestamp now = Timestamp.now(); // Changed from Date to Timestamp
                     String chatId = UUID.randomUUID().toString();
                     Chat newChat = new Chat(chatId, now, now, candidateId, employerId);
                     createChat(newChat).observeForever(chatLiveData::setValue);
@@ -202,20 +242,50 @@ public class ChatsRepository {
     }
 
     private Chat documentToChat(DocumentSnapshot document) {
-        String id = document.getId();
-        String jobId = document.getString("jobId");
-        String candidateId = document.getString("candidateId");
-        String employerId = document.getString("employerId");
-        String lastMessage = document.getString("lastMessage");
-        String lastMessageAtString = document.getString("lastMessageAt");
-        String createdAtString = document.getString("createdAt");
-        String updatedAtString = document.getString("updatedAt");
-
-        Date lastMessageAt = parseDate(lastMessageAtString);
-        Date createdAt = parseDate(createdAtString);
-        Date updatedAt = parseDate(updatedAtString);
+        if (document == null) return null;
         
-        return new Chat(id, createdAt, updatedAt, jobId, candidateId, employerId, lastMessage, lastMessageAt);
+        Chat chat = new Chat();
+        
+        // Set ID
+        chat.setId(document.getId());
+        
+        // Set String fields
+        if (document.contains("candidateId")) {
+            chat.setCandidateId(document.getString("candidateId"));
+        }
+        
+        if (document.contains("employerId")) {
+            chat.setEmployerId(document.getString("employerId"));
+        }
+        
+        if (document.contains("jobId")) {
+            chat.setJobId(document.getString("jobId"));
+        }
+        
+        if (document.contains("lastMessage")) {
+            chat.setLastMessage(document.getString("lastMessage"));
+        }
+        
+        // Set Timestamp fields - need to convert from Timestamp to Date for BaseModel fields
+        if (document.contains("createdAt")) {
+            Timestamp createdAt = document.getTimestamp("createdAt");
+            if (createdAt != null) {
+                chat.setCreatedAt(createdAt.toDate());
+            }
+        }
+        
+        if (document.contains("updatedAt")) {
+            Timestamp updatedAt = document.getTimestamp("updatedAt");
+            if (updatedAt != null) {
+                chat.setUpdatedAt(updatedAt.toDate());
+            }
+        }
+        
+        if (document.contains("lastMessageAt")) {
+            chat.setLastMessageAt(document.getTimestamp("lastMessageAt"));
+        }
+        
+        return chat;
     }
 
     private Map<String, Object> messageToMap(Message message) {
@@ -232,18 +302,40 @@ public class ChatsRepository {
     }
 
     private Message documentToMessage(DocumentSnapshot document) {
+        if (document == null) return null;
+        
         String id = document.getId();
         String chatId = document.getString("chatId");
         String senderId = document.getString("senderId");
-        UserRole senderRole = UserRole.fromString(document.getString("senderRole"));
+        String senderRoleString = document.getString("senderRole");
+        UserRole senderRole = senderRoleString != null ? UserRole.fromString(senderRoleString) : UserRole.GUEST;
         String content = document.getString("content");
-        String timestampString = document.getString("timestamp");
-        String createdAtString = document.getString("createdAt");
-        String updatedAtString = document.getString("updatedAt");
-
-        Date timestamp = parseDate(timestampString);
-        Date createdAt = parseDate(createdAtString);
-        Date updatedAt = parseDate(updatedAtString);
+        
+        // Handle timestamps properly - they could be stored as Timestamp or String
+        Date timestamp = null;
+        Date createdAt = null;
+        Date updatedAt = null;
+        
+        if (document.contains("timestamp") && document.get("timestamp") instanceof com.google.firebase.Timestamp) {
+            timestamp = document.getTimestamp("timestamp").toDate();
+        } else {
+            String timestampString = document.getString("timestamp");
+            timestamp = parseDate(timestampString);
+        }
+        
+        if (document.contains("createdAt") && document.get("createdAt") instanceof com.google.firebase.Timestamp) {
+            createdAt = document.getTimestamp("createdAt").toDate();
+        } else {
+            String createdAtString = document.getString("createdAt");
+            createdAt = parseDate(createdAtString);
+        }
+        
+        if (document.contains("updatedAt") && document.get("updatedAt") instanceof com.google.firebase.Timestamp) {
+            updatedAt = document.getTimestamp("updatedAt").toDate();
+        } else {
+            String updatedAtString = document.getString("updatedAt");
+            updatedAt = parseDate(updatedAtString);
+        }
 
         return new Message(id, createdAt, updatedAt, chatId, senderId, senderRole, content, timestamp);
     }

@@ -78,4 +78,11 @@
         android:name="com.pbde401.studyworks.ui.employer.profile.EmployerProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_employer_profile" />
+        
+    <!-- Employer Chats -->
+    <fragment
+        android:id="@+id/navigation_employer_chats"
+        android:name="com.pbde401.studyworks.ui.employer.chats.EmployerChatsFragment"
+        android:label="Chats"
+        tools:layout="@layout/fragment_employer_chats" />
 </navigation>

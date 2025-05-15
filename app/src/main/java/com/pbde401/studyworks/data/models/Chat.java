@@ -2,6 +2,7 @@ package com.pbde401.studyworks.data.models;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.google.firebase.Timestamp;
 import java.util.Date;
 
 public class Chat extends BaseModel {
@@ -14,19 +15,26 @@ public class Chat extends BaseModel {
     @Nullable
     private String lastMessage;
     @Nullable
-    private Date lastMessageAt;
+    private Timestamp lastMessageAt;
 
-    public Chat(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
+    // Add default constructor
+    public Chat() {
+        super();
+    }
+
+    public Chat(@NonNull String id, @NonNull Timestamp createdAt, @NonNull Timestamp updatedAt,
                @NonNull String candidateId, @NonNull String employerId) {
-        super(id, createdAt, updatedAt);
+        super(id, createdAt != null ? createdAt.toDate() : null, 
+                  updatedAt != null ? updatedAt.toDate() : null);
         this.candidateId = candidateId;
         this.employerId = employerId;
     }
 
-    public Chat(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
+    public Chat(@NonNull String id, @NonNull Timestamp createdAt, @NonNull Timestamp updatedAt,
                @Nullable String jobId, @NonNull String candidateId, @NonNull String employerId,
-               @Nullable String lastMessage, @Nullable Date lastMessageAt) {
-        super(id, createdAt, updatedAt);
+               @Nullable String lastMessage, @Nullable Timestamp lastMessageAt) {
+        super(id, createdAt != null ? createdAt.toDate() : null, 
+                  updatedAt != null ? updatedAt.toDate() : null);
         this.jobId = jobId;
         this.candidateId = candidateId;
         this.employerId = employerId;
@@ -71,11 +79,11 @@ public class Chat extends BaseModel {
     }
 
     @Nullable
-    public Date getLastMessageAt() {
+    public Timestamp getLastMessageAt() {
         return lastMessageAt;
     }
 
-    public void setLastMessageAt(@Nullable Date lastMessageAt) {
+    public void setLastMessageAt(@Nullable Timestamp lastMessageAt) {
         this.lastMessageAt = lastMessageAt;
     }
 }
