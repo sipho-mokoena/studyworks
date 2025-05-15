@@ -15,26 +15,26 @@ public class Chat extends BaseModel {
     @Nullable
     private String lastMessage;
     @Nullable
-    private Timestamp lastMessageAt;
+    private Date lastMessageAt;
 
     // Add default constructor
     public Chat() {
         super();
     }
 
-    public Chat(@NonNull String id, @NonNull Timestamp createdAt, @NonNull Timestamp updatedAt,
+    public Chat(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
                @NonNull String candidateId, @NonNull String employerId) {
-        super(id, createdAt != null ? createdAt.toDate() : null, 
-                  updatedAt != null ? updatedAt.toDate() : null);
+        super(id, createdAt != null ? createdAt : null,
+                  updatedAt != null ? updatedAt : null);
         this.candidateId = candidateId;
         this.employerId = employerId;
     }
 
-    public Chat(@NonNull String id, @NonNull Timestamp createdAt, @NonNull Timestamp updatedAt,
+    public Chat(@NonNull String id, @NonNull Date createdAt, @NonNull Date updatedAt,
                @Nullable String jobId, @NonNull String candidateId, @NonNull String employerId,
-               @Nullable String lastMessage, @Nullable Timestamp lastMessageAt) {
-        super(id, createdAt != null ? createdAt.toDate() : null, 
-                  updatedAt != null ? updatedAt.toDate() : null);
+               @Nullable String lastMessage, @Nullable Date lastMessageAt) {
+        super(id, createdAt != null ? createdAt : null,
+                  updatedAt != null ? updatedAt : null);
         this.jobId = jobId;
         this.candidateId = candidateId;
         this.employerId = employerId;
@@ -79,11 +79,11 @@ public class Chat extends BaseModel {
     }
 
     @Nullable
-    public Timestamp getLastMessageAt() {
+    public Date getLastMessageAt() {
         return lastMessageAt;
     }
 
-    public void setLastMessageAt(@Nullable Timestamp lastMessageAt) {
+    public void setLastMessageAt(@Nullable Date lastMessageAt) {
         this.lastMessageAt = lastMessageAt;
     }
 }

@@ -46,7 +46,7 @@ public abstract class BaseChatListAdapter extends RecyclerView.Adapter<BaseChatL
             
             // Format and display timestamp
             if (chat.getLastMessageAt() != null) {
-                long timeMillis = chat.getLastMessageAt().toDate().getTime(); // Convert Timestamp to Date first
+                long timeMillis = (chat.getLastMessageAt()).getTime(); // Convert Timestamp to Date first
                 holder.tvLastMessageTime.setText(com.pbde401.studyworks.utils.DateUtils.formatTimestamp(timeMillis));
             } else {
                 holder.tvLastMessageTime.setText("");

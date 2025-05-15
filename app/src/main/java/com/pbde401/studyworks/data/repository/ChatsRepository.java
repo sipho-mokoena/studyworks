@@ -33,7 +33,7 @@ public class ChatsRepository {
 
         db.collection(COLLECTION_PATH)
             .whereEqualTo("employerId", employerId)
-            .orderBy("lastMessageAt", Query.Direction.DESCENDING)
+//            .orderBy("lastMessageAt", Query.Direction.DESCENDING) // Requires indexing
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
                 List<Chat> chatsList = new ArrayList<>();
@@ -58,7 +58,7 @@ public class ChatsRepository {
 
         db.collection(COLLECTION_PATH)
             .whereEqualTo("candidateId", candidateId)
-            .orderBy("lastMessageAt", Query.Direction.DESCENDING)
+//            .orderBy("lastMessageAt", Query.Direction.DESCENDING)  // Requires indexing
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
                 List<Chat> chatsList = new ArrayList<>();
@@ -80,7 +80,7 @@ public class ChatsRepository {
 
     public Task<Void> createChat(String candidateId, String employerId) {
         String chatId = db.collection(COLLECTION_PATH).document().getId();
-        Timestamp now = Timestamp.now(); // Use Timestamp.now() instead of new Date()
+        Date now = new Date();
 
         Chat newChat = new Chat(chatId, now, now, candidateId, employerId);
         
@@ -158,7 +158,7 @@ public class ChatsRepository {
                     chatLiveData.setValue(existingChat);
                 } else {
                     // Create new chat
-                    Timestamp now = Timestamp.now(); // Changed from Date to Timestamp
+                    Date now = new Date();
                     String chatId = UUID.randomUUID().toString();
                     Chat newChat = new Chat(chatId, now, now, candidateId, employerId);
                     createChat(newChat).observeForever(chatLiveData::setValue);
@@ -235,9 +235,9 @@ public class ChatsRepository {
         map.put("candidateId", chat.getCandidateId());
         map.put("employerId", chat.getEmployerId());
         map.put("lastMessage", chat.getLastMessage());
-        map.put("lastMessageAt", chat.getLastMessageAt());
-        map.put("createdAt", chat.getCreatedAt());
-        map.put("updatedAt", chat.getUpdatedAt());
+        map.put("lastMessageAt", dateToIso8601Format(chat.getLastMessageAt()));
+        map.put("createdAt", dateToIso8601Format(chat.getCreatedAt()));
+        map.put("updatedAt", dateToIso8601Format(chat.getUpdatedAt()));
         return map;
     }
 
@@ -266,23 +266,16 @@ public class ChatsRepository {
             chat.setLastMessage(document.getString("lastMessage"));
         }
         
-        // Set Timestamp fields - need to convert from Timestamp to Date for BaseModel fields
         if (document.contains("createdAt")) {
-            Timestamp createdAt = document.getTimestamp("createdAt");
-            if (createdAt != null) {
-                chat.setCreatedAt(createdAt.toDate());
-            }
+            chat.setCreatedAt(parseDate(document.getString("createdAt")));
         }
         
         if (document.contains("updatedAt")) {
-            Timestamp updatedAt = document.getTimestamp("updatedAt");
-            if (updatedAt != null) {
-                chat.setUpdatedAt(updatedAt.toDate());
-            }
+            chat.setUpdatedAt(parseDate(document.getString("updatedAt")));
         }
         
         if (document.contains("lastMessageAt")) {
-            chat.setLastMessageAt(document.getTimestamp("lastMessageAt"));
+            chat.setLastMessageAt(parseDate(document.getString("lastMessageAt")));
         }
         
         return chat;
@@ -293,7 +286,7 @@ public class ChatsRepository {
         map.put("id", message.getId());
         map.put("chatId", message.getChatId());
         map.put("senderId", message.getSenderId());
-        map.put("senderRole", message.getSenderRole().toString());
+        map.put("senderRole", message.getSenderRole().getRoleString());
         map.put("content", message.getContent());
         map.put("timestamp", dateToIso8601Format(message.getTimestamp()));
         map.put("createdAt", dateToIso8601Format(message.getCreatedAt()));

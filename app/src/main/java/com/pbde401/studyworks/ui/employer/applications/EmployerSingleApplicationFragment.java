@@ -245,7 +245,7 @@ public class EmployerSingleApplicationFragment extends Fragment {
                 break;
         }
         
-        statusChip.setChipBackgroundColorResource(backgroundColor);
+        statusChip.setBackgroundColor(backgroundColor);
         statusChip.setTextColor(textColor);
     }
 
