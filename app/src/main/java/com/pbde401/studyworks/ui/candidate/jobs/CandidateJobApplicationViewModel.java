@@ -27,6 +27,7 @@ public class CandidateJobApplicationViewModel extends ViewModel {
     private final MutableLiveData<String> error = new MutableLiveData<>();private final MutableLiveData<Job> job = new MutableLiveData<>();
     private final MutableLiveData<Application> application = new MutableLiveData<>();
     private final MutableLiveData<Chat> chat = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isEditMode = new MutableLiveData<>(false);
 
     private String jobId;
     private String userId;
@@ -138,6 +139,14 @@ public class CandidateJobApplicationViewModel extends ViewModel {
         return chat;
     }
 
+    public LiveData<Boolean> getIsEditMode() {
+        return isEditMode;
+    }
+    
+    public void setEditMode(boolean editMode) {
+        isEditMode.setValue(editMode);
+    }
+    
     public void submitApplication(String coverLetter, String portfolioUrl, String linkedinUrl) {
         if (jobId == null || userId == null) {
             error.setValue("Missing job or user information");
@@ -147,6 +156,37 @@ public class CandidateJobApplicationViewModel extends ViewModel {
         loading.setValue(true);
         error.setValue(null);
 
+        // Check if application already exists
+        applicationsRepository.getApplicationByJobAndCandidateId(jobId, userId)
+                .observeForever(existingApplication -> {
+                    if (existingApplication != null) {
+                        // Update existing application
+                        updateApplication(existingApplication, coverLetter, portfolioUrl, linkedinUrl);
+                    } else {
+                        // Create new application
+                        createNewApplication(coverLetter, portfolioUrl, linkedinUrl);
+                    }
+                });
+    }
+    
+    private void updateApplication(Application existingApplication, String coverLetter, 
+                                  String portfolioUrl, String linkedinUrl) {
+        existingApplication.setCoverLetter(coverLetter);
+        existingApplication.setPortfolioUrl(portfolioUrl);
+        existingApplication.setLinkedinUrl(linkedinUrl);
+        existingApplication.setUpdatedAt(new Date());
+        
+        try {
+            // Pass the application ID as the first parameter
+            applicationsRepository.updateApplication(existingApplication.getId(), existingApplication);
+            loading.setValue(false);
+        } catch (Exception e) {
+            loading.setValue(false);
+            error.setValue("Failed to update application: " + e.getMessage());
+        }
+    }
+    
+    private void createNewApplication(String coverLetter, String portfolioUrl, String linkedinUrl) {
         // Get job details first
         jobsRepository.getJob(jobId).observeForever(job -> {
             if (job != null) {

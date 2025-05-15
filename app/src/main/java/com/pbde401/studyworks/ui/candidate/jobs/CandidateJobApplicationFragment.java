@@ -50,6 +50,7 @@ public class CandidateJobApplicationFragment extends Fragment {
     private Button cancelButton;
     private Button submitButton;
     private ProgressBar loadingProgress;
+    private Button editButton;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -77,6 +78,18 @@ public class CandidateJobApplicationFragment extends Fragment {
         cancelButton = view.findViewById(R.id.cancelButton);
         submitButton = view.findViewById(R.id.submitButton);
         loadingProgress = view.findViewById(R.id.loadingProgress);
+
+        // Initialize the edit button (moved up before setupListeners call)
+        editButton = new Button(requireContext(), null, com.google.android.material.R.attr.materialButtonStyle);
+        editButton.setText("Edit Application");
+        editButton.setLayoutParams(new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT));
+        
+        // Add the edit button to the layout
+        ViewGroup formContainer = (ViewGroup) submitButton.getParent();
+        formContainer.addView(editButton, 0);
+        editButton.setVisibility(View.GONE);
 
         // Initialize ViewModel with repositories
         viewModel = new ViewModelProvider(this, new ViewModelProvider.Factory() {
@@ -120,8 +133,27 @@ public class CandidateJobApplicationFragment extends Fragment {
                 portfolioUrlInput.setText(application.getPortfolioUrl());
                 linkedinUrlInput.setText(application.getLinkedinUrl());
 
-                // Disable inputs
+                // Initially disable form but show edit button
                 disableForm();
+                editButton.setVisibility(View.VISIBLE);
+                submitButton.setText("Update Application");
+            } else {
+                // No application exists
+                editButton.setVisibility(View.GONE);
+                enableForm();
+                submitButton.setText("Submit Application");
+            }
+        });
+
+        viewModel.getIsEditMode().observe(getViewLifecycleOwner(), isEditMode -> {
+            if (isEditMode) {
+                enableForm();
+                editButton.setVisibility(View.GONE);
+            } else {
+                if (viewModel.getApplication().getValue() != null) {
+                    disableForm();
+                    editButton.setVisibility(View.VISIBLE);
+                }
             }
         });
 
@@ -140,7 +172,13 @@ public class CandidateJobApplicationFragment extends Fragment {
                         portfolioUrlInput.getText().toString(),
                         linkedinUrlInput.getText().toString()
                 );
+                // Exit edit mode after submitting
+                viewModel.setEditMode(false);
             }
+        });
+        
+        editButton.setOnClickListener(v -> {
+            viewModel.setEditMode(true);
         });
     }
 
@@ -183,11 +221,20 @@ public class CandidateJobApplicationFragment extends Fragment {
         portfolioUrlInput.setEnabled(false);
         linkedinUrlInput.setEnabled(false);
         submitButton.setEnabled(false);
+        submitButton.setVisibility(View.GONE);
 
         // Show message recruiter button if chat exists
         if (viewModel.getChat().getValue() != null) {
             messageRecruiterButton.setVisibility(View.VISIBLE);
         }
+    }
+    
+    private void enableForm() {
+        coverLetterInput.setEnabled(true);
+        portfolioUrlInput.setEnabled(true);
+        linkedinUrlInput.setEnabled(true);
+        submitButton.setEnabled(true);
+        submitButton.setVisibility(View.VISIBLE);
     }
 
     private boolean validateForm() {
