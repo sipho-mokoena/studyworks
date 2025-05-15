@@ -40,6 +40,13 @@ public abstract class BaseChatListAdapter extends RecyclerView.Adapter<BaseChatL
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         Chat chat = getChatAt(position);
         
+        // Set click listener
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onChatClick(chat);
+            }
+        });
+        
         // Display last message if available
         if (chat.getLastMessage() != null && !chat.getLastMessage().isEmpty()) {
             holder.tvLastMessage.setText(chat.getLastMessage());
